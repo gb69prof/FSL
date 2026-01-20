@@ -1,0 +1,9 @@
+SCOPRI FOGGIA — testo di esempio
+
+Qui inserirai il testo della sezione “Scopri”.
+Puoi sostituire questo file con il tuo scopri.txt mantenendo lo stesso nome.
+
+Suggerimento:
+- paragrafi brevi
+- titoletti
+- link ai luoghi nell’indice a sinistra
