@@ -1,0 +1,7 @@
+CAMPI DIOMEDEI
+
+Inserisci qui il testo principale (diomedee.txt).
+Suggerimento: usa paragrafi brevi e righe vuote per separare i blocchi.
+
+Esempio:
+I Campi Diomedei custodiscono...
