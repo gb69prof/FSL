@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Scopri - Foggia</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header class="header">
+      <div class="topbar">
+        <a class="home-btn" href="index.html" aria-label="Torna alla Home" title="Home">
+          <span style="font-size:22px;">🏠</span>
+        </a>
+        <div class="brand">
+          <div class="title">SCOPRI</div>
+          <div class="subtitle">La storia della città</div>
+        </div>
+      </div>
+      <div class="rule"></div>
+    </header>
+
+    <main class="main">
+      <section class="card">
+        <div class="media">
+        <aside class="side-index">
+          <ul>
+            <li class="side-item active" data-idx="0">Villaggio neolitico</li>
+            <li class="side-item" data-idx="1">Primo nucleo medievale</li>
+            <li class="side-item" data-idx="2">Ricostruzione del Settecento</li>
+            <li class="side-item" data-idx="3">Vie dell’Ottocento</li>
+            <li class="side-item" data-idx="4">Nuovi parchi</li>
+          </ul>
+        </aside>
+
+          <div class="media-inner" id="media-inner">
+            <!-- image / video / sketchfab inserted here -->
+          </div>
+        </div>
+
+        <div class="content">
+          <div>
+            <div class="section-title" id="section-title">Villaggio neolitico</div>
+            <div class="scrollbox" id="text-box">
+              <!-- scroll text -->
+            </div>
+          </div>
+
+                    <div class="actions" aria-label="Azioni multimediali">
+            <button class="action" id="btn-video" type="button">
+              <span class="ico">🎥</span>
+              <span class="lbl">Guarda<br>il video</span>
+            </button>
+            <button class="action" id="btn-gallery" type="button">
+              <span class="ico">🖼️</span>
+              <span class="lbl">Galleria</span>
+            </button>
+            <button class="action" id="btn-3d" type="button">
+              <span class="ico">🧊</span>
+              <span class="lbl">3D</span>
+            </button>
+            <button class="action" id="btn-map" type="button">
+              <span class="ico">🗺️</span>
+              <span class="lbl">Map</span>
+            </button>
+            <button class="action" id="btn-guide" type="button">
+              <span class="ico">💬</span>
+              <span class="lbl">La tua<br>guida AI</span>
+            </button>
+            <div class="note" style="grid-column:1/-1;">
+              Tip: se apri il video e termina, la pagina torna automaticamente all’immagine.
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <div class="gallery-strip" id="gallery-strip"> id="gallery-strip">
+          <h3>Immagini (scorri orizzontalmente)</h3>
+          <div class="scroller" id="scroller"></div>
+        </div>
+      </section>
+
+      <aside class="card sidebar" aria-label="Indice tappe">
+        <div class="side-title">Indice</div>
+        <div class="side-list">
+          <div class="side-item active" data-idx="0"><div class="n">1</div><div class="t">Villaggio neolitico</div></div>
+          <div class="side-item" data-idx="1"><div class="n">2</div><div class="t">Primo nucleo medievale</div></div>
+          <div class="side-item" data-idx="2"><div class="n">3</div><div class="t">Ricostruzione del Settecento</div></div>
+          <div class="side-item" data-idx="3"><div class="n">4</div><div class="t">Le vie dell’Ottocento</div></div>
+          <div class="side-item" data-idx="4"><div class="n">5</div><div class="t">I nuovi parchi</div></div>
+        </div>
+
+        <div class="bottom-nav" aria-label="Navigazione rapida">
+          <div class="pill active" data-idx="0">1 · Villaggio neolitico</div>
+          <div class="pill" data-idx="1">2 · Medievale</div>
+          <div class="pill" data-idx="2">3 · Settecento</div>
+          <div class="pill" data-idx="3">4 · Ottocento</div>
+          <div class="pill" data-idx="4">5 · Parchi</div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
