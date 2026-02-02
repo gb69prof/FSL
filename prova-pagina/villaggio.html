@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Il villaggio neolitico</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Sezione 1: barra + viewer (qui si aprono video/immagini/3D/mappa) -->
+    <div class="card" id="sezione1">
+      <div class="header">
+        <a class="icon-btn" href="scopri.html" title="Torna alla Home">
+          <img class="icon" src="assets/icons/home.svg" alt="Home"/>
+          <span>Home</span>
+        </a>
+
+        <h1 class="title">Il villaggio neolitico</h1>
+
+        <div class="spacer"></div>
+
+        <a class="icon-btn" href="ai-tutor.html" title="Apri AI Tutor">
+          <img class="icon" src="assets/icons/bot.svg" alt="AI Tutor"/>
+          <span>AI Tutor</span>
+        </a>
+      </div>
+
+      <div class="viewer" id="viewer">
+        <div class="viewer-top">
+          <div class="viewer-title" id="viewerTitle">Viewer</div>
+          <button class="viewer-close" id="viewerClose" aria-label="Chiudi">Chiudi</button>
+        </div>
+        <div class="viewer-body" id="viewerBody"></div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- Colonna sinistra -->
+      <div>
+        <!-- Sezione 2: immagine di copertina -->
+        <div class="card cover" id="sezione2">
+          <img src="assets/img/villaggio_cover.png" alt="Villaggio neolitico (copertina)"/>
+        </div>
+
+        <!-- Sezioni 4-5-6: strumenti -->
+        <div class="card section" style="margin-top: var(--gap);" id="sezione4_5_6">
+          <h2>Esplora</h2>
+          <div class="tools">
+            <!-- 4: video -->
+            <div class="tool-card" id="openVideo" role="button" tabindex="0" aria-label="Apri video">
+              <div class="tool-head">
+                <div class="tool-title">Video</div>
+                <img class="icon" src="assets/icons/video.svg" alt="Video"/>
+              </div>
+              <div class="tool-desc">Apri il video (YouTube).</div>
+              <div class="small">Si apre in Sezione 1</div>
+            </div>
+
+            <!-- 5: galleria -->
+            <div class="tool-card" role="button" tabindex="0" aria-label="Apri galleria (clic sulle immagini)">
+              <div class="tool-head">
+                <div class="tool-title">Galleria</div>
+                <img class="icon" src="assets/icons/image.svg" alt="Galleria"/>
+              </div>
+              <div class="tool-desc">Clicca una miniatura per aprire l’immagine.</div>
+              <div class="thumb-row">
+                <img class="thumb" src="assets/img/galleria_1.jpeg" data-gallery="assets/img/galleria_1.jpeg" data-label="Galleria – immagine 1" alt="Miniatura 1"/>
+                <img class="thumb" src="assets/img/galleria_2.jpeg" data-gallery="assets/img/galleria_2.jpeg" data-label="Galleria – immagine 2" alt="Miniatura 2"/>
+                <img class="thumb" src="assets/img/galleria_3.jpeg" data-gallery="assets/img/galleria_3.jpeg" data-label="Galleria – immagine 3" alt="Miniatura 3"/>
+                <img class="thumb" src="assets/img/galleria_4.png" data-gallery="assets/img/galleria_4.png" data-label="Galleria – immagine 4" alt="Miniatura 4"/>
+                <img class="thumb" src="assets/img/galleria_5.png" data-gallery="assets/img/galleria_5.png" data-label="Galleria – immagine 5" alt="Miniatura 5"/>
+              </div>
+              <div class="small">Si apre in Sezione 1</div>
+            </div>
+
+            <!-- 6: sketchfab -->
+            <div class="tool-card" id="openSketchfab" role="button" tabindex="0" aria-label="Apri modello 3D">
+              <div class="tool-head">
+                <div class="tool-title">Modello 3D</div>
+                <img class="icon" src="assets/icons/cube.svg" alt="3D"/>
+              </div>
+              <div class="tool-desc">Apri l’embed Sketchfab.</div>
+              <div class="small">Si apre in Sezione 1</div>
+            </div>
+          </div>
+
+          <!-- Sezione 7: Maps -->
+          <div class="map-card" id="openMap" role="button" tabindex="0" aria-label="Apri mappa">
+            <div>
+              <div style="font-weight:800;">Google Maps</div>
+              <div class="small">Coordinate: 41.458024, 15.563664</div>
+              <div class="small">Si apre in Sezione 1</div>
+            </div>
+            <img class="icon" src="assets/icons/map.svg" alt="Mappa"/>
+          </div>
+
+          <div class="footer-note">Nota: se vuoi che “Home” punti a un file diverso, modifica il link in alto (scopri.html).</div>
+        </div>
+      </div>
+
+      <!-- Colonna destra -->
+      <div class="card textbox" id="sezione3">
+        <div class="meta">Testo caricato da <code>txt/villaggio.txt</code></div>
+        <pre id="textContent">Caricamento…</pre>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
