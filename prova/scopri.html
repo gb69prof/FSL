@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Scopri – Foggia</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body class="scopri">
+  <!-- SEZIONE 1: barra + area media (dove si aprono video/galleria/3D/map) -->
+  <header class="topbar" id="topbar">
+    <div class="topbar-row">
+      <a class="topbtn" href="index.html" aria-label="Torna alla Home" title="Home">
+        <span class="ico">🏠</span>
+      </a>
+
+      <div class="topbar-title">
+        <div class="kicker">SCOPRI</div>
+        <h1 id="page-title">Villaggio neolitico</h1>
+      </div>
+
+      <button class="topbtn" id="btn-guide" type="button" aria-label="Apri la tua guida AI" title="La tua guida AI">
+        <span class="ico">💬</span>
+      </button>
+    </div>
+
+    <!-- Media drawer (SEZIONE 1) -->
+    <section class="drawer" id="drawer" aria-label="Contenuti multimediali" hidden>
+      <div class="drawer-head">
+        <div class="drawer-chip" id="drawer-label">Contenuto</div>
+        <button class="drawer-close" id="drawer-close" type="button" aria-label="Chiudi">✕</button>
+      </div>
+      <div class="drawer-body" id="drawer-body">
+        <!-- media injected here -->
+      </div>
+    </section>
+  </header>
+
+  <main class="layout">
+    <!-- COLONNA SINISTRA -->
+    <section class="left">
+      <!-- SEZIONE 2: immagine di copertina -->
+      <div class="cover" aria-label="Immagine di copertina">
+        <img id="cover-img" src="assets/img/IMG_4125.png" alt="Villaggio neolitico - immagine di copertina" />
+      </div>
+
+      <!-- SEZIONI 4-5-6: icone -->
+      <div class="mini-row" aria-label="Azioni">
+        <button class="mini" id="btn-video" type="button" title="Apri il video">
+          <span class="mini-ico">🎥</span>
+          <span class="mini-txt">Video</span>
+        </button>
+        <button class="mini" id="btn-gallery" type="button" title="Apri la galleria">
+          <span class="mini-ico">🖼️</span>
+          <span class="mini-txt">Galleria</span>
+        </button>
+        <button class="mini" id="btn-3d" type="button" title="Apri il 3D">
+          <span class="mini-ico">🧊</span>
+          <span class="mini-txt">3D</span>
+        </button>
+      </div>
+
+      <!-- SEZIONE 7: maps (barra larga) -->
+      <button class="wide" id="btn-map" type="button" title="Apri la mappa">
+        <span class="wide-ico">🗺️</span>
+        <span class="wide-txt">Apri Google Maps (Campi Diomedei)</span>
+      </button>
+
+      <!-- Indice tappe -->
+      <nav class="tappe" aria-label="Indice tappe">
+        <div class="tappe-title">Tappe del percorso</div>
+        <button class="tappa active" data-idx="0" type="button">1. Villaggio neolitico</button>
+        <button class="tappa" data-idx="1" type="button">2. Primo nucleo medievale</button>
+        <button class="tappa" data-idx="2" type="button">3. Ricostruzione del Settecento</button>
+        <button class="tappa" data-idx="3" type="button">4. Vie dell’Ottocento</button>
+        <button class="tappa" data-idx="4" type="button">5. Nuovi parchi</button>
+      </nav>
+    </section>
+
+    <!-- COLONNA DESTRA -->
+    <section class="right">
+      <!-- SEZIONE 3: testo (da villaggio.txt) -->
+      <article class="textbox" aria-label="Testo" id="textbox">
+        <div class="loading">Caricamento testo…</div>
+      </article>
+    </section>
+  </main>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
