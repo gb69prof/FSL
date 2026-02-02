@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Il villaggio neolitico</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Sezione 1: barra comandi -->
+    <div class="card" id="sezione1">
+      <div class="header">
+        <a class="icon-btn" href="scopri.html" title="Torna alla Home">
+          <img class="icon" src="assets/icons/home.svg" alt="Home"/>
+          <span>Home</span>
+        </a>
+
+        <h1 class="title">Il villaggio neolitico</h1>
+
+        <div class="spacer"></div>
+
+        <a class="icon-btn" href="ai-tutor.html" title="Apri AI Tutor">
+          <img class="icon" src="assets/icons/bot.svg" alt="AI Tutor"/>
+          <span>AI Tutor</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- Colonna sinistra -->
+      <div>
+        <!-- Sezione 2: media slot dinamico -->
+        <div class="card cover" id="sezione2">
+          <div id="mediaSlot"></div>
+        </div>
+
+        <!-- Esplora -->
+        <div class="card section explore" style="margin-top: var(--gap);" id="esplora">
+          <h2>Esplora</h2>
+
+          <div class="tools">
+            <div class="tool-card" id="openVideo" role="button" tabindex="0" aria-label="Apri video">
+              <div class="tool-head">
+                <div class="tool-title">Video</div>
+                <img class="icon" src="assets/icons/video.svg" alt="Video"/>
+              </div>
+              <div class="tool-desc">Visualizza il video al posto della copertina.</div>
+              <div class="small">Si apre in Sezione 2</div>
+            </div>
+
+            <div class="tool-card" id="openGallery" role="button" tabindex="0" aria-label="Apri galleria">
+              <div class="tool-head">
+                <div class="tool-title">Galleria</div>
+                <img class="icon" src="assets/icons/image.svg" alt="Galleria"/>
+              </div>
+              <div class="tool-desc">Ogni click mostra la prossima immagine (in sequenza).</div>
+              <div class="small">Si apre in Sezione 2</div>
+            </div>
+
+            <div class="tool-card" id="openSketchfab" role="button" tabindex="0" aria-label="Apri modello 3D">
+              <div class="tool-head">
+                <div class="tool-title">Modello 3D</div>
+                <img class="icon" src="assets/icons/cube.svg" alt="3D"/>
+              </div>
+              <div class="tool-desc">Visualizza il modello 3D al posto della copertina.</div>
+              <div class="small">Si apre in Sezione 2</div>
+            </div>
+          </div>
+
+          <div class="map-card" id="openMap" role="button" tabindex="0" aria-label="Apri mappa">
+            <div>
+              <div style="font-weight:800;">Google Maps</div>
+              <div class="small">Coordinate: 41.458024, 15.563664</div>
+              <div class="small">Si apre in Sezione 2</div>
+            </div>
+            <img class="icon" src="assets/icons/map.svg" alt="Mappa"/>
+          </div>
+
+          <div style="margin-top: var(--gap);">
+            <button class="icon-btn" id="backCover" type="button" title="Ripristina copertina">
+              <span>Ripristina copertina</span>
+            </button>
+          </div>
+
+          <div class="footer-note">La Sezione 2 sostituisce la copertina con ciò che scegli (video / immagini / 3D / mappa).</div>
+        </div>
+      </div>
+
+      <!-- Colonna destra -->
+      <div class="card textbox" id="sezione3">
+        <div class="meta">Testo caricato da <code>txt/villaggio.txt</code></div>
+        <pre id="textContent">Caricamento…</pre>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
