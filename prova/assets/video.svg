@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Video">
+<defs>
+  <!-- Glossy gradients -->
+  <linearGradient id="gBlue" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#77c3ff"/>
+    <stop offset="0.55" stop-color="#2f7dff"/>
+    <stop offset="1" stop-color="#1b4fd6"/>
+  </linearGradient>
+  <linearGradient id="gBlue2" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#9fe0ff"/>
+    <stop offset="0.5" stop-color="#2f86ff"/>
+    <stop offset="1" stop-color="#1a45c8"/>
+  </linearGradient>
+  <linearGradient id="gWhite" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#ffffff"/>
+    <stop offset="1" stop-color="#dfe9f7"/>
+  </linearGradient>
+  <linearGradient id="gGray" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#3a4556"/>
+    <stop offset="1" stop-color="#161c26"/>
+  </linearGradient>
+  <linearGradient id="gRed" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#ff6a5e"/>
+    <stop offset="1" stop-color="#d91712"/>
+  </linearGradient>
+  <linearGradient id="gGreen" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#7cff7a"/>
+    <stop offset="1" stop-color="#1aa64a"/>
+  </linearGradient>
+  <linearGradient id="gYellow" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#ffe38a"/>
+    <stop offset="1" stop-color="#f2b413"/>
+  </linearGradient>
+
+  <!-- Soft shadow -->
+  <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%">
+    <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#000" flood-opacity="0.35"/>
+    <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity="0.25"/>
+  </filter>
+
+  <!-- Inner shine -->
+  <filter id="shine" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="1.2" result="b"/>
+    <feOffset dx="0" dy="-1" result="o"/>
+    <feComposite in="o" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="inner"/>
+    <feColorMatrix in="inner" type="matrix"
+      values="1 0 0 0 1
+              0 1 0 0 1
+              0 0 1 0 1
+              0 0 0 .22 0"/>
+    <feComposite in="SourceGraphic" operator="over"/>
+  </filter>
+
+  <!-- white outline style -->
+  <style>
+    .ol{stroke:#ffffff;stroke-opacity:.95;stroke-width:6;stroke-linejoin:round;stroke-linecap:round}
+    .ol2{stroke:#eaf2ff;stroke-opacity:.9;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+  </style>
+</defs>
+
+<g filter="url(#shadow)">
+  <ellipse cx="64" cy="106" rx="34" ry="9" fill="#000" opacity=".18"/>
+  <!-- frame outline -->
+  <rect class="ol" x="22" y="38" width="84" height="54" rx="10" fill="none"/>
+  <rect x="22" y="38" width="84" height="54" rx="10" fill="url(#gGray)"/>
+  <!-- perforations -->
+  <rect x="26" y="46" width="8" height="8" rx="2" fill="#d9e3f2" opacity=".85"/>
+  <rect x="26" y="56" width="8" height="8" rx="2" fill="#d9e3f2" opacity=".85"/>
+  <rect x="26" y="66" width="8" height="8" rx="2" fill="#d9e3f2" opacity=".85"/>
+  <rect x="26" y="76" width="8" height="8" rx="2" fill="#d9e3f2" opacity=".85"/>
+  <rect x="94" y="46" width="8" height="8" rx="2" fill="#d9e3f2" opacity=".85"/>
+  <rect x="94" y="56" width="8" height="8" rx="2" fill="#d9e3f2" opacity=".85"/>
+  <rect x="94" y="66" width="8" height="8" rx="2" fill="#d9e3f2" opacity=".85"/>
+  <rect x="94" y="76" width="8" height="8" rx="2" fill="#d9e3f2" opacity=".85"/>
+  <!-- screen -->
+  <rect x="38" y="46" width="52" height="36" rx="7" fill="url(#gWhite)"/>
+  <!-- play -->
+  <path d="M60 55 l22 9-22 9z" fill="url(#gRed)" stroke="#ffffff" stroke-opacity=".7" stroke-width="3" stroke-linejoin="round"/>
+  <!-- progress -->
+  <rect x="40" y="84" width="48" height="4.5" rx="2.2" fill="#ffffff" opacity=".35"/>
+  <rect x="40" y="84" width="20" height="4.5" rx="2.2" fill="#ff3a2e" opacity=".8"/>
+</g>
+
+</svg>

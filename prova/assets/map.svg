@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Maps">
+<defs>
+  <!-- Glossy gradients -->
+  <linearGradient id="gBlue" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#77c3ff"/>
+    <stop offset="0.55" stop-color="#2f7dff"/>
+    <stop offset="1" stop-color="#1b4fd6"/>
+  </linearGradient>
+  <linearGradient id="gBlue2" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#9fe0ff"/>
+    <stop offset="0.5" stop-color="#2f86ff"/>
+    <stop offset="1" stop-color="#1a45c8"/>
+  </linearGradient>
+  <linearGradient id="gWhite" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#ffffff"/>
+    <stop offset="1" stop-color="#dfe9f7"/>
+  </linearGradient>
+  <linearGradient id="gGray" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#3a4556"/>
+    <stop offset="1" stop-color="#161c26"/>
+  </linearGradient>
+  <linearGradient id="gRed" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#ff6a5e"/>
+    <stop offset="1" stop-color="#d91712"/>
+  </linearGradient>
+  <linearGradient id="gGreen" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#7cff7a"/>
+    <stop offset="1" stop-color="#1aa64a"/>
+  </linearGradient>
+  <linearGradient id="gYellow" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#ffe38a"/>
+    <stop offset="1" stop-color="#f2b413"/>
+  </linearGradient>
+
+  <!-- Soft shadow -->
+  <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%">
+    <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#000" flood-opacity="0.35"/>
+    <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity="0.25"/>
+  </filter>
+
+  <!-- Inner shine -->
+  <filter id="shine" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="1.2" result="b"/>
+    <feOffset dx="0" dy="-1" result="o"/>
+    <feComposite in="o" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="inner"/>
+    <feColorMatrix in="inner" type="matrix"
+      values="1 0 0 0 1
+              0 1 0 0 1
+              0 0 1 0 1
+              0 0 0 .22 0"/>
+    <feComposite in="SourceGraphic" operator="over"/>
+  </filter>
+
+  <!-- white outline style -->
+  <style>
+    .ol{stroke:#ffffff;stroke-opacity:.95;stroke-width:6;stroke-linejoin:round;stroke-linecap:round}
+    .ol2{stroke:#eaf2ff;stroke-opacity:.9;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+  </style>
+</defs>
+
+<g filter="url(#shadow)">
+  <ellipse cx="64" cy="106" rx="32" ry="9" fill="#000" opacity=".18"/>
+  <!-- folded map outline -->
+  <path class="ol" fill="none" d="M28 36 l24-8 24 8 24-8 v64 l-24 8-24-8-24 8z"/>
+  <path d="M28 36 l24-8 24 8 24-8 v64 l-24 8-24-8-24 8z" fill="url(#gWhite)"/>
+  <!-- panels -->
+  <path d="M28 36 l24-8 v64 l-24 8z" fill="url(#gGreen)" opacity=".95"/>
+  <path d="M52 28 l24 8 v64 l-24-8z" fill="url(#gBlue2)" opacity=".95"/>
+  <path d="M76 36 l24-8 v64 l-24 8z" fill="#61d06c" opacity=".85"/>
+  <!-- road -->
+  <path d="M30 74 q16-18 34-8 t34-2" fill="none" stroke="#f7d45a" stroke-width="10" stroke-linecap="round"/>
+  <path d="M30 74 q16-18 34-8 t34-2" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" opacity=".7"/>
+  <!-- pin -->
+  <path class="ol" fill="none" d="M86 30 c0-10 8-18 18-18s18 8 18 18c0 18-18 36-18 36S86 48 86 30z"/>
+  <path d="M104 12c10 0 18 8 18 18 0 18-18 36-18 36S86 48 86 30c0-10 8-18 18-18z" fill="url(#gRed)"/>
+  <circle cx="104" cy="30" r="7" fill="#ffffff" opacity=".95"/>
+  <path d="M99 34 q5 6 10 0" fill="none" stroke="#d91712" stroke-width="2" opacity=".25"/>
+  <text x="104" y="34" text-anchor="middle" font-family="system-ui,Segoe UI,Arial" font-weight="800" font-size="18" fill="#e11d1a">G</text>
+</g>
+
+</svg>

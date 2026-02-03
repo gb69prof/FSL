@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Home">
+<defs>
+  <!-- Glossy gradients -->
+  <linearGradient id="gBlue" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#77c3ff"/>
+    <stop offset="0.55" stop-color="#2f7dff"/>
+    <stop offset="1" stop-color="#1b4fd6"/>
+  </linearGradient>
+  <linearGradient id="gBlue2" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#9fe0ff"/>
+    <stop offset="0.5" stop-color="#2f86ff"/>
+    <stop offset="1" stop-color="#1a45c8"/>
+  </linearGradient>
+  <linearGradient id="gWhite" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#ffffff"/>
+    <stop offset="1" stop-color="#dfe9f7"/>
+  </linearGradient>
+  <linearGradient id="gGray" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#3a4556"/>
+    <stop offset="1" stop-color="#161c26"/>
+  </linearGradient>
+  <linearGradient id="gRed" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#ff6a5e"/>
+    <stop offset="1" stop-color="#d91712"/>
+  </linearGradient>
+  <linearGradient id="gGreen" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#7cff7a"/>
+    <stop offset="1" stop-color="#1aa64a"/>
+  </linearGradient>
+  <linearGradient id="gYellow" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#ffe38a"/>
+    <stop offset="1" stop-color="#f2b413"/>
+  </linearGradient>
+
+  <!-- Soft shadow -->
+  <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%">
+    <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#000" flood-opacity="0.35"/>
+    <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity="0.25"/>
+  </filter>
+
+  <!-- Inner shine -->
+  <filter id="shine" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="1.2" result="b"/>
+    <feOffset dx="0" dy="-1" result="o"/>
+    <feComposite in="o" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="inner"/>
+    <feColorMatrix in="inner" type="matrix"
+      values="1 0 0 0 1
+              0 1 0 0 1
+              0 0 1 0 1
+              0 0 0 .22 0"/>
+    <feComposite in="SourceGraphic" operator="over"/>
+  </filter>
+
+  <!-- white outline style -->
+  <style>
+    .ol{stroke:#ffffff;stroke-opacity:.95;stroke-width:6;stroke-linejoin:round;stroke-linecap:round}
+    .ol2{stroke:#eaf2ff;stroke-opacity:.9;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+  </style>
+</defs>
+
+<g filter="url(#shadow)">
+  <!-- base shadow -->
+  <ellipse cx="64" cy="104" rx="34" ry="10" fill="#000" opacity=".18"/>
+  <!-- house outline -->
+  <path class="ol" fill="none" d="M24 61 L64 30 L104 61"/>
+  <path class="ol" fill="none" d="M34 58 V96 a10 10 0 0 0 10 10 H84 a10 10 0 0 0 10-10 V58"/>
+  <!-- roof -->
+  <path d="M24 61 L64 30 L104 61 L94 61 L64 40 L34 61 Z" fill="url(#gBlue2)"/>
+  <path class="ol2" fill="none" d="M24 61 L64 30 L104 61"/>
+  <!-- body -->
+  <path d="M40 58 V96 a8 8 0 0 0 8 8 H80 a8 8 0 0 0 8-8 V58 Z" fill="url(#gWhite)"/>
+  <!-- door -->
+  <path d="M56 104 V76 a10 10 0 0 1 10-10 h0 a10 10 0 0 1 10 10 V104 Z" fill="url(#gBlue)"/>
+  <circle cx="63" cy="85" r="2.2" fill="#eaf2ff" opacity=".9"/>
+  <!-- chimney -->
+  <path d="M82 36 h14 v18 h-14 z" fill="url(#gWhite)"/>
+  <path d="M82 36 h14 v7 h-14 z" fill="#d8e6ff"/>
+</g>
+
+</svg>

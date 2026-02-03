@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Foto">
+<defs>
+  <!-- Glossy gradients -->
+  <linearGradient id="gBlue" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#77c3ff"/>
+    <stop offset="0.55" stop-color="#2f7dff"/>
+    <stop offset="1" stop-color="#1b4fd6"/>
+  </linearGradient>
+  <linearGradient id="gBlue2" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#9fe0ff"/>
+    <stop offset="0.5" stop-color="#2f86ff"/>
+    <stop offset="1" stop-color="#1a45c8"/>
+  </linearGradient>
+  <linearGradient id="gWhite" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#ffffff"/>
+    <stop offset="1" stop-color="#dfe9f7"/>
+  </linearGradient>
+  <linearGradient id="gGray" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#3a4556"/>
+    <stop offset="1" stop-color="#161c26"/>
+  </linearGradient>
+  <linearGradient id="gRed" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#ff6a5e"/>
+    <stop offset="1" stop-color="#d91712"/>
+  </linearGradient>
+  <linearGradient id="gGreen" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#7cff7a"/>
+    <stop offset="1" stop-color="#1aa64a"/>
+  </linearGradient>
+  <linearGradient id="gYellow" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#ffe38a"/>
+    <stop offset="1" stop-color="#f2b413"/>
+  </linearGradient>
+
+  <!-- Soft shadow -->
+  <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%">
+    <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#000" flood-opacity="0.35"/>
+    <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity="0.25"/>
+  </filter>
+
+  <!-- Inner shine -->
+  <filter id="shine" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="1.2" result="b"/>
+    <feOffset dx="0" dy="-1" result="o"/>
+    <feComposite in="o" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="inner"/>
+    <feColorMatrix in="inner" type="matrix"
+      values="1 0 0 0 1
+              0 1 0 0 1
+              0 0 1 0 1
+              0 0 0 .22 0"/>
+    <feComposite in="SourceGraphic" operator="over"/>
+  </filter>
+
+  <!-- white outline style -->
+  <style>
+    .ol{stroke:#ffffff;stroke-opacity:.95;stroke-width:6;stroke-linejoin:round;stroke-linecap:round}
+    .ol2{stroke:#eaf2ff;stroke-opacity:.9;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+  </style>
+</defs>
+
+<g filter="url(#shadow)">
+  <ellipse cx="60" cy="106" rx="34" ry="9" fill="#000" opacity=".18"/>
+  <!-- back photo -->
+  <path class="ol" fill="none" d="M38 44 h64 v48 H38z" transform="rotate(6 70 68)"/>
+  <rect x="36" y="42" width="66" height="50" rx="8" fill="url(#gWhite)" transform="rotate(6 69 67)"/>
+  <!-- middle photo -->
+  <path class="ol" fill="none" d="M26 50 h64 v48 H26z" transform="rotate(-4 58 74)"/>
+  <rect x="24" y="48" width="66" height="50" rx="8" fill="url(#gWhite)" transform="rotate(-4 57 73)"/>
+  <!-- front photo -->
+  <path class="ol" fill="none" d="M20 56 h64 v48 H20z"/>
+  <rect x="18" y="54" width="66" height="50" rx="8" fill="url(#gWhite)"/>
+  <!-- scene -->
+  <rect x="24" y="60" width="54" height="38" rx="6" fill="#dff2ff"/>
+  <circle cx="66" cy="70" r="6" fill="url(#gYellow)"/>
+  <path d="M26 96 l14-18 10 12 8-8 20 14z" fill="url(#gGreen)"/>
+  <path d="M26 96 l14-18 10 12 8-8 20 14" fill="none" stroke="#0b3d2a" stroke-opacity=".18" stroke-width="2"/>
+  <path d="M28 76 q10-14 22-6" fill="none" stroke="#3c7bd6" stroke-width="4" stroke-linecap="round" opacity=".35"/>
+</g>
+
+</svg>
