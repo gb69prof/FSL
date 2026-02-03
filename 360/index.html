@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atrio Demo 180°</title>
+<style>
+body { margin:0; font-family:Arial,sans-serif; background:#111; }
+#viewer { width:100vw; height:100vh; overflow:hidden; position:relative; }
+#panorama { height:100%; position:absolute; left:0; top:0; }
+.hotspot {
+  position:absolute; top:50%; width:24px; height:24px; border-radius:50%;
+  background:#ffcc00; cursor:pointer; transform:translate(-50%,-50%);
+}
+#overlay {
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,.8);
+  align-items:center; justify-content:center;
+}
+#overlay img { max-width:90%; max-height:90%; }
+</style>
+</head>
+<body>
+<div id="viewer">
+  <img id="panorama" src="assets/panorama-180.jpg">
+  <div class="hotspot" style="left:25%" onclick="openImg('assets/hotspot-1.jpg')"></div>
+  <div class="hotspot" style="left:50%" onclick="openImg('assets/hotspot-2.jpg')"></div>
+  <div class="hotspot" style="left:75%" onclick="openImg('assets/hotspot-3.jpg')"></div>
+</div>
+<div id="overlay" onclick="this.style.display='none'">
+  <img id="overlayImg">
+</div>
+<script>
+let startX=0, currentX=0;
+const pan=document.getElementById('panorama');
+pan.onload=()=>{ pan.style.width=(pan.naturalWidth*window.innerHeight/pan.naturalHeight)+'px'; };
+document.getElementById('viewer').addEventListener('mousedown',e=>{startX=e.clientX;});
+document.getElementById('viewer').addEventListener('mousemove',e=>{
+ if(e.buttons){
+   currentX += e.clientX-startX;
+   startX=e.clientX;
+   currentX=Math.min(0, Math.max(window.innerWidth-pan.offsetWidth, currentX));
+   pan.style.left=currentX+'px';
+ }
+});
+function openImg(src){
+ document.getElementById('overlayImg').src=src;
+ document.getElementById('overlay').style.display='flex';
+}
+</script>
+</body>
+</html>
