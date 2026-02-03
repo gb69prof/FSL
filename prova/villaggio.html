@@ -1,35 +1,47 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Il villaggio neolitico</title>
 
   <style>
     /* =========================
-       CONFIG VISIVA GENERALE
+       CONFIG BASE (facile da modificare)
        ========================= */
     :root{
-      --gold: #d7b54a;          /* giallo/oro */
-      --gold-soft: rgba(215,181,74,.35);
-      --panel: rgba(10, 12, 16, 0.72);
-      --panel-strong: rgba(10, 12, 16, 0.82);
-      --text: #e9eef6;
-      --muted: rgba(233,238,246,.75);
-      --shadow: 0 12px 30px rgba(0,0,0,.35);
-      --radius: 16px;
-      --gap: 16px;
-      --maxw: 1100px;
-      --minh-content: 420px;
+      --gold: #d8b84a;      /* giallo/oro */
+      --gold-2: #f2d46b;    /* oro chiaro */
+      --panel: rgba(18, 18, 18, 0.72);
+      --panel-2: rgba(18, 18, 18, 0.62);
+      --text: #f3f3f3;
+      --muted: rgba(255,255,255,0.72);
+      --shadow: 0 10px 30px rgba(0,0,0,0.35);
+      --radius: 18px;
+      --border: 1px solid rgba(255,255,255,0.14);
+      --maxw: 1200px;
+
+      /* Sfondo: richiesto dal prompt */
+      --bg-url: url("assets/sfondo.jpg");
     }
 
-    /* Sfondo: immagine leggera */
+    /* =========================
+       RESET + BODY
+       ========================= */
+    *{ box-sizing: border-box; }
+    html, body { height: 100%; }
     body{
       margin: 0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       color: var(--text);
-      background: url("assets/sfondo.jpg") center / cover no-repeat fixed;
-      min-height: 100vh;
+
+      /* Background richiesto: ripetuto o coprente.
+         Qui lo uso "cover" + fallback di repeat su schermi grandi. */
+      background-image: var(--bg-url);
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-attachment: fixed;
     }
 
     /* Overlay leggero per garantire leggibilità */
@@ -37,673 +49,691 @@
       content:"";
       position: fixed;
       inset: 0;
-      background: radial-gradient(1200px 700px at 50% 10%, rgba(0,0,0,.35), rgba(0,0,0,.65));
-      pointer-events: none;
+      background: radial-gradient(1200px 800px at 30% 20%, rgba(0,0,0,0.35), rgba(0,0,0,0.72));
       z-index: -1;
     }
 
+    /* =========================
+       LAYOUT PRINCIPALE
+       ========================= */
     .app{
       max-width: var(--maxw);
       margin: 0 auto;
-      padding: 18px 14px 22px;
-      box-sizing: border-box;
+      padding: 16px 14px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 100%;
     }
 
     /* =========================
-       HEADER
+       HEADER: home | titolo | bot
        ========================= */
     header{
       background: var(--panel);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: var(--radius);
+      border: var(--border);
       box-shadow: var(--shadow);
-      padding: 14px 14px 10px;
-      backdrop-filter: blur(6px);
+      border-radius: var(--radius);
+      padding: 12px 12px 10px;
     }
 
     .header-row{
       display: grid;
-      grid-template-columns: 54px 1fr 54px;
+      grid-template-columns: 56px 1fr 56px;
       align-items: center;
       gap: 10px;
     }
 
     .icon-btn{
-      width: 44px;
-      height: 44px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      transition: transform .12s ease, background .12s ease, border-color .12s ease;
-      text-decoration: none;
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(0,0,0,0.18);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: transform 120ms ease, background 120ms ease;
+      user-select: none;
+      text-decoration: none; /* per <a> */
     }
+
     .icon-btn:hover{
       transform: translateY(-1px);
-      background: rgba(255,255,255,.08);
-      border-color: rgba(255,255,255,.18);
+      background: rgba(0,0,0,0.28);
     }
 
     .icon-btn img{
-      width: 26px;
-      height: 26px;
+      width: 28px;
+      height: 28px;
       display: block;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.35));
     }
 
     h1{
       margin: 0;
       text-align: center;
-      font-size: clamp(18px, 2.4vw, 28px);
-      letter-spacing: .4px;
-      color: var(--gold);
-      font-weight: 800;
-      text-shadow: 0 2px 10px rgba(0,0,0,.35);
+      font-size: 1.25rem;
+      letter-spacing: 0.4px;
+      color: var(--gold-2);
+      text-shadow: 0 2px 18px rgba(0,0,0,0.55);
+      padding: 0 6px;
     }
 
-    .divider{
+    .gold-line{
       margin-top: 10px;
       height: 2px;
+      width: 100%;
       background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      opacity: .9;
+      border-radius: 999px;
+      opacity: 0.95;
     }
 
     /* =========================
-       CORPO (DUE COLONNE)
+       CORPO: due colonne
        ========================= */
-    main{
-      margin-top: var(--gap);
+    .main{
       display: grid;
-      grid-template-columns: 1.15fr .85fr; /* sinistra più ampia */
-      gap: var(--gap);
+      grid-template-columns: 1.3fr 0.9fr;
+      gap: 14px;
+      flex: 1;
     }
 
     .panel{
       background: var(--panel);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: var(--radius);
+      border: var(--border);
       box-shadow: var(--shadow);
+      border-radius: var(--radius);
       overflow: hidden;
-      backdrop-filter: blur(6px);
+      min-height: 320px;
     }
 
     /* Riquadro 3: area contenuto dinamico */
-    #contentArea{
-      min-height: var(--minh-content);
+    #content{
       position: relative;
-      display: flex;
-      flex-direction: column;
+      padding: 10px;
+      display: grid;
+      align-items: stretch;
     }
 
-    /* area interna con padding */
-    .panel-inner{
-      padding: 14px;
-      box-sizing: border-box;
-      height: 100%;
+    .content-inner{
+      border-radius: calc(var(--radius) - 8px);
+      border: 1px solid rgba(255,255,255,0.10);
+      overflow: hidden;
+      background: rgba(0,0,0,0.18);
+      min-height: 320px;
     }
 
-    /* contenuti dinamici: immagine/iframe/galleria */
-    .dynamic-wrap{
-      height: 100%;
-      min-height: var(--minh-content);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    /* Riquadro 4: testo da file */
+    #textPanel{
+      padding: 10px;
+      display: grid;
+      align-items: stretch;
     }
 
-    /* Copertina / immagini in riquadro 3 */
-    .hero-img{
-      width: 100%;
-      height: clamp(260px, 42vh, 520px);
-      object-fit: cover;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
-    }
-
-    /* Iframe generico (maps, video, 3d) */
-    .embed{
-      width: 100%;
-      height: clamp(320px, 50vh, 560px);
-      border: 0;
-      border-radius: 14px;
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.12);
-    }
-
-    /* Messaggi di errore/avviso */
-    .message{
-      padding: 14px;
-      border-radius: 14px;
-      border: 1px dashed rgba(255,255,255,.25);
-      background: rgba(0,0,0,.25);
-      color: var(--text);
-      line-height: 1.35;
-    }
-    .message strong{ color: var(--gold); }
-
-    /* Riquadro 4: testo da file TXT */
-    #textPanel .panel-inner{
-      height: var(--minh-content);
-      overflow: auto; /* scrollbar */
-    }
-
-    #textContent{
-      white-space: pre-wrap; /* mantiene a capo dal txt */
+    .text-inner{
+      border-radius: calc(var(--radius) - 8px);
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.18);
+      padding: 14px 14px;
+      overflow: auto; /* scrollbar richiesta */
       line-height: 1.55;
-      font-size: 15px;
+      font-size: 0.98rem;
       color: var(--text);
+      min-height: 320px;
+      white-space: pre-wrap;  /* rispetta ritorni a capo del txt */
     }
 
-    .text-loading{
+    .text-inner .muted{
       color: var(--muted);
       font-style: italic;
     }
 
+    /* Messaggi di errore chiari */
+    .error-box{
+      padding: 14px;
+      color: #ffd6d6;
+      background: rgba(120,0,0,0.22);
+      border: 1px solid rgba(255,80,80,0.35);
+      border-radius: 12px;
+      margin: 10px;
+      line-height: 1.45;
+    }
+
     /* =========================
-       BARRA PULSANTI IN BASSO
+       BARRA BOTTOM: 4 icone
        ========================= */
-    .toolbar{
-      margin-top: var(--gap);
-      padding: 10px 12px;
+    .bottom-bar{
+      background: var(--panel-2);
+      border: var(--border);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding: 10px;
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 10px;
       align-items: center;
-      justify-items: center;
-      background: var(--panel-strong);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(6px);
     }
 
-    .tool-btn{
-      width: 100%;
-      display: inline-flex;
+    .bottom-btn{
+      display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      padding: 10px 8px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
+      padding: 12px 10px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.18);
       cursor: pointer;
+      transition: transform 120ms ease, background 120ms ease;
       user-select: none;
-      transition: transform .12s ease, background .12s ease, border-color .12s ease;
-      color: var(--text);
+      min-height: 54px;
     }
 
-    .tool-btn:hover{
+    .bottom-btn:hover{
       transform: translateY(-1px);
-      background: rgba(255,255,255,.08);
-      border-color: rgba(255,255,255,.18);
+      background: rgba(0,0,0,0.28);
     }
 
-    .tool-btn:active{
-      transform: translateY(0px);
-    }
-
-    .tool-btn img{
-      width: 22px;
-      height: 22px;
+    .bottom-btn img{
+      width: 26px;
+      height: 26px;
       display: block;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.35));
     }
 
-    .tool-btn span{
-      font-size: 14px;
+    .bottom-btn span{
+      display: none; /* icone pure, ma puoi attivare se vuoi */
       color: var(--muted);
-      display: none; /* icone pure (pulito). Se vuoi testo, metti display:inline */
+      font-size: 0.92rem;
     }
 
     /* =========================
-       GALLERIA (Riquadro 7)
+       CONTENUTI NEL RIQUADRO 3
+       ========================= */
+
+    /* Copertina: immagine piena */
+    .cover-img{
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      background: rgba(0,0,0,0.2);
+      min-height: 320px;
+    }
+
+    /* Iframe per maps/video/3d */
+    .embed-frame{
+      width: 100%;
+      height: 100%;
+      min-height: 320px;
+      border: 0;
+      display: block;
+      background: rgba(0,0,0,0.2);
+    }
+
+    /* =========================
+       GALLERIA (riquadro 7)
        ========================= */
     .gallery{
+      height: 100%;
+      min-height: 320px;
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
+      grid-template-rows: 1fr auto;
+      gap: 10px;
+      padding: 10px;
     }
 
     .gallery-main{
-      width: 100%;
-      height: clamp(260px, 42vh, 520px);
-      object-fit: cover;
       border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.18);
+      display: grid;
+      place-items: center;
+      min-height: 240px;
+    }
+
+    .gallery-main img{
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      background: rgba(0,0,0,0.22);
     }
 
     .thumbs{
       display: flex;
       gap: 10px;
-      overflow-x: auto;     /* scorrimento */
-      padding-bottom: 6px;
+      overflow-x: auto;   /* scorrimento orizzontale */
+      padding: 6px 4px 2px;
       scrollbar-width: thin;
     }
 
     .thumb{
       flex: 0 0 auto;
-      width: 92px;
-      height: 62px;
-      object-fit: cover;
+      width: 88px;
+      height: 58px;
       border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.12);
-      opacity: .85;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.18);
       cursor: pointer;
-      transition: opacity .12s ease, transform .12s ease, border-color .12s ease;
-      background: rgba(255,255,255,.04);
+      transition: transform 120ms ease, border-color 120ms ease;
     }
+
     .thumb:hover{
-      opacity: 1;
       transform: translateY(-1px);
-      border-color: rgba(215,181,74,.55);
+      border-color: rgba(216,184,74,0.55);
     }
-    .thumb.active{
-      opacity: 1;
-      border-color: rgba(215,181,74,.95);
-      box-shadow: 0 8px 20px rgba(0,0,0,.25);
+
+    .thumb img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
     /* =========================
-       RESPONSIVE
+       RESPONSIVE: colonne -> righe
        ========================= */
     @media (max-width: 860px){
-      main{
-        grid-template-columns: 1fr; /* colonne in verticale */
+      body{ background-attachment: scroll; }
+      .main{
+        grid-template-columns: 1fr;
       }
-      #textPanel .panel-inner{
-        height: auto;
-        max-height: 50vh;
-      }
-      .toolbar{
+      h1{ font-size: 1.12rem; }
+      .bottom-bar{
         grid-template-columns: repeat(4, 1fr);
       }
+      .bottom-btn span{ display: none; }
     }
 
-    @media (max-width: 480px){
+    @media (max-width: 460px){
       .header-row{
-        grid-template-columns: 46px 1fr 46px;
+        grid-template-columns: 50px 1fr 50px;
       }
-      .icon-btn{ width: 40px; height: 40px; }
-      .icon-btn img{ width: 24px; height: 24px; }
-      .tool-btn{ padding: 10px 6px; }
+      .icon-btn{
+        width: 48px;
+        height: 48px;
+      }
+      .bottom-btn{
+        padding: 10px;
+        min-height: 50px;
+      }
+      .bottom-btn img{
+        width: 24px;
+        height: 24px;
+      }
     }
   </style>
 </head>
 
 <body>
   <div class="app">
+
     <!-- =========================
-         HEADER
+         HEADER (Riquadro 1 + Titolo + Riquadro 2)
          ========================= -->
     <header>
       <div class="header-row">
         <!-- Riquadro 1 (Home) -->
-        <a class="icon-btn" href="index.html" aria-label="Home">
-          <img src="assets/home.svg" alt="Home" onerror="this.onerror=null; this.src=''; this.alt='[icona mancante]';" />
+        <a class="icon-btn" href="index.html" title="Home">
+          <img src="assets/home.svg" alt="Home" onerror="this.onerror=null; this.style.display='none';" />
         </a>
 
         <!-- Titolo pagina -->
         <h1>Il villaggio neolitico</h1>
 
         <!-- Riquadro 2 (Guida AI) -->
-        <a class="icon-btn" href="LINK_CHATBOT" target="_blank" rel="noopener" aria-label="Guida AI">
-          <img src="assets/bot.svg" alt="Guida AI" onerror="this.onerror=null; this.src=''; this.alt='[icona mancante]';" />
+        <a class="icon-btn" href="LINK_CHATBOT" target="_blank" rel="noopener" title="Guida AI">
+          <img src="assets/bot.svg" alt="Guida AI" onerror="this.onerror=null; this.style.display='none';" />
         </a>
       </div>
 
-      <div class="divider"></div>
+      <!-- Linea decorativa giallo/oro -->
+      <div class="gold-line" aria-hidden="true"></div>
     </header>
 
     <!-- =========================
-         CORPO (DUE COLONNE)
+         CORPO A DUE COLONNE
          ========================= -->
-    <main>
-      <!-- Riquadro 3: AREA CONTENUTO DINAMICO -->
-      <section id="contentArea" class="panel" aria-label="Area contenuto dinamico">
-        <div class="panel-inner">
-          <div id="dynamicWrap" class="dynamic-wrap">
-            <!-- All’apertura: foto di copertina -->
-            <!-- NOTA: se manca l'immagine, mostriamo un messaggio invece di rompere -->
-            <img id="coverImage" class="hero-img" src="assets/villaggio.png" alt="Copertina: Il villaggio neolitico" />
-          </div>
+    <main class="main">
+
+      <!-- Riquadro 3 (sinistra) – AREA CONTENUTO DINAMICO -->
+      <section class="panel" id="content">
+        <div class="content-inner" id="dynamicArea">
+          <!-- All'apertura: immagine di copertina (villaggio.png da assets/) -->
+          <img
+            id="coverImage"
+            class="cover-img"
+            src="assets/villaggio.png"
+            alt="Copertina - Il villaggio neolitico"
+          />
         </div>
       </section>
 
-      <!-- Riquadro 4: TESTO DA FILE TXT -->
-      <section id="textPanel" class="panel" aria-label="Testo">
-        <div class="panel-inner">
-          <div id="textContent" class="text-loading">Caricamento testo in corso…</div>
+      <!-- Riquadro 4 (destra) – TESTO DA FILE TXT -->
+      <aside class="panel" id="textPanel">
+        <div class="text-inner" id="textArea">
+          <div class="muted">Caricamento testo in corso…</div>
         </div>
-      </section>
+      </aside>
+
     </main>
 
     <!-- =========================
-         BARRA PULSANTI (4 ICONE)
+         BARRA PULSANTI IN BASSO (4 icone)
          ========================= -->
-    <nav class="toolbar" aria-label="Strumenti">
-      <!-- Riquadro 5: Google Maps -->
-      <button class="tool-btn" id="btnMap" type="button" title="Google Maps">
-        <img src="assets/map.svg" alt="Mappa" onerror="this.onerror=null; this.src=''; this.alt='[icona mancante]';" />
-        <span>Mappa</span>
+    <nav class="bottom-bar" aria-label="Azioni">
+      <!-- Riquadro 5 – Google Maps -->
+      <button class="bottom-btn" id="btnMap" type="button" title="Google Maps">
+        <img src="assets/map.svg" alt="Mappa" onerror="this.onerror=null; this.style.display='none';" />
+        <span>Maps</span>
       </button>
 
-      <!-- Riquadro 6: Video -->
-      <button class="tool-btn" id="btnVideo" type="button" title="Video">
-        <img src="assets/video.svg" alt="Video" onerror="this.onerror=null; this.src=''; this.alt='[icona mancante]';" />
+      <!-- Riquadro 6 – Video -->
+      <button class="bottom-btn" id="btnVideo" type="button" title="Video">
+        <img src="assets/video.svg" alt="Video" onerror="this.onerror=null; this.style.display='none';" />
         <span>Video</span>
       </button>
 
-      <!-- Riquadro 7: Galleria immagini -->
-      <button class="tool-btn" id="btnGallery" type="button" title="Immagini">
-        <img src="assets/image.svg" alt="Immagini" onerror="this.onerror=null; this.src=''; this.alt='[icona mancante]';" />
+      <!-- Riquadro 7 – Immagini (galleria) -->
+      <button class="bottom-btn" id="btnGallery" type="button" title="Galleria immagini">
+        <img src="assets/image.svg" alt="Immagini" onerror="this.onerror=null; this.style.display='none';" />
         <span>Immagini</span>
       </button>
 
-      <!-- Riquadro 8: 3D / Sketchfab o pagina esterna -->
-      <button class="tool-btn" id="btn3D" type="button" title="3D">
-        <img src="assets/cube.svg" alt="3D" onerror="this.onerror=null; this.src=''; this.alt='[icona mancante]';" />
+      <!-- Riquadro 8 – 3D -->
+      <button class="bottom-btn" id="btn3D" type="button" title="3D">
+        <img src="assets/cube.svg" alt="3D" onerror="this.onerror=null; this.style.display='none';" />
         <span>3D</span>
       </button>
     </nav>
+
   </div>
 
   <script>
-    /* ==========================================================
-       CONFIGURAZIONE "MODELLO"
-       - Qui trovi tutti i placeholder così come li hai chiesti.
-       - Sostituiscili volta per volta senza toccare il resto.
-       ========================================================== */
+    /* =========================
+       CONFIG CONTENUTI (modifica qui, senza toccare la logica)
+       ========================= */
     const CONFIG = {
-      // Riquadro 3: copertina iniziale
-      coverImage: "assets/villaggio.png",
-
-      // Riquadro 4: testo da file
+      // File testo richiesto: fetch('txt/villaggio.txt')
       textFile: "txt/villaggio.txt",
 
-      // Riquadro 5: Google Maps (placeholder richiesti)
+      // Copertina in apertura (riquadro 3)
+      coverImage: "assets/villaggio.png",
+
+      // Google Maps (coordinate richieste dal prompt: {LAT} {LON} {ZOOM})
       lat: "LAT",
       lon: "LON",
       zoom: "ZOOM",
 
-      // Riquadro 6: video (link embed)
-      videoEmbedUrl: "LINK_VIDEO_EMBED",
+      // Video embed: richiesto dal prompt
+      // Nota: per YouTube Shorts l'embed migliore è spesso /embed/ID
+      // Qui rispetto il link dato, ma gestisco un fallback.
+      videoUrl: "https://youtube.com/shorts/jQPxf3NOF0w?si=Zmxg9Q2MIB906t__",
 
-      // Riquadro 7: galleria (placeholder richiesti)
+      // Galleria immagini (tutte in assets/)
       galleryImages: [
         "assets/1.jpeg",
-        "assets/2.jpeg",
-        "assets/3.jpeg"
+        "assets/2.png",
+        "assets/3.png"
       ],
 
-      // Riquadro 8: 3D / pagina esterna
-      link3D: "LINK_3D"
+      // Pagina/URL 3D richiesto (oltre allo snippet sketchfab fornito nel prompt)
+      link3d: "LINK_3D",
+
+      // Snippet sketchfab (fornito nel prompt) - lo tengo pronto come HTML
+      sketchfabEmbedHTML: `
+        <div class="sketchfab-embed-wrapper">
+          <iframe title="Villaggio Campi Diomedei - Foggia"
+            frameborder="0"
+            allowfullscreen
+            mozallowfullscreen="true"
+            webkitallowfullscreen="true"
+            allow="autoplay; fullscreen; xr-spatial-tracking"
+            xr-spatial-tracking
+            execution-while-out-of-viewport
+            execution-while-not-rendered
+            web-share
+            class="embed-frame"
+            src="https://sketchfab.com/models/0a306cc6e14647f1960cd30c82fe0b2c/embed">
+          </iframe>
+          <p style="font-size: 13px; font-weight: normal; margin: 5px; color: #4A4A4A;">
+            <a href="https://sketchfab.com/3d-models/villaggio-campi-diomedei-foggia-0a306cc6e14647f1960cd30c82fe0b2c?utm_medium=embed&utm_campaign=share-popup&utm_content=0a306cc6e14647f1960cd30c82fe0b2c" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;">
+              Villaggio Campi Diomedei - Foggia
+            </a>
+            by
+            <a href="https://sketchfab.com/gb.prof.69?utm_medium=embed&utm_campaign=share-popup&utm_content=0a306cc6e14647f1960cd30c82fe0b2c" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;">
+              gb.prof.69
+            </a>
+            on
+            <a href="https://sketchfab.com?utm_medium=embed&utm_campaign=share-popup&utm_content=0a306cc6e14647f1960cd30c82fe0b2c" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;">
+              Sketchfab
+            </a>
+          </p>
+        </div>
+      `
     };
 
-    /* ==========================================================
-       UTILITA'
-       ========================================================== */
+    /* =========================
+       UTILS: gestione errori e contenuto dinamico
+       ========================= */
+    const dynamicArea = document.getElementById("dynamicArea");
+    const coverImageEl = document.getElementById("coverImage");
+    const textArea = document.getElementById("textArea");
 
-    // Sostituisce il contenuto del riquadro 3 con un elemento DOM.
-    function setContentArea(node) {
-      const wrap = document.getElementById("dynamicWrap");
-      wrap.innerHTML = "";
-      wrap.appendChild(node);
+    // Mostra messaggio chiaro in un pannello (riquadro 3 o 4)
+    function showError(containerEl, message){
+      containerEl.innerHTML = `
+        <div class="error-box">
+          <strong>Contenuto non disponibile.</strong><br/>
+          ${message}
+        </div>
+      `;
     }
 
-    // Mostra un messaggio nel riquadro 3
-    function showContentMessage(title, details) {
-      const box = document.createElement("div");
-      box.className = "message";
-      box.innerHTML = `<strong>${escapeHtml(title)}</strong><br>${escapeHtml(details || "")}`;
-      setContentArea(box);
+    // Imposta contenuto del riquadro 3 con un iframe (maps/video/3d)
+    function setIframeContent(src, title){
+      if(!src || src.includes("{") || src.includes("LINK_3D") || src.includes("LAT") || src.includes("LON")){
+        showError(dynamicArea, "Manca un link valido o un parametro (controlla CONFIG).");
+        return;
+      }
+      dynamicArea.innerHTML = `
+        <iframe class="embed-frame" src="${src}" title="${title || 'Contenuto'}" loading="lazy" allowfullscreen></iframe>
+      `;
     }
 
-    // Mostra un messaggio nel riquadro 4 (testo)
-    function showTextMessage(title, details) {
-      const text = document.getElementById("textContent");
-      text.classList.remove("text-loading");
-      text.innerHTML = `<strong style="color: var(--gold)">${escapeHtml(title)}</strong>\n\n${escapeHtml(details || "")}`;
+    // Ripristina copertina
+    function showCover(){
+      dynamicArea.innerHTML = `
+        <img class="cover-img" src="${CONFIG.coverImage}" alt="Copertina - Il villaggio neolitico" />
+      `;
+      // Gestione errore immagine
+      const img = dynamicArea.querySelector("img");
+      img.onerror = () => showError(dynamicArea, "Non trovo l'immagine di copertina in assets/villaggio.png.");
     }
 
-    // Escape minimo per evitare HTML indesiderato nei messaggi
-    function escapeHtml(str){
-      return String(str)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;");
-    }
-
-    // Verifica "placeholder" non compilati
-    function isPlaceholder(value){
-      return !value || String(value).includes("{") || String(value) === "LAT" || String(value) === "LON" || String(value) === "ZOOM"
-             || String(value).includes("LINK_");
-    }
-
-    /* ==========================================================
-       AVVIO: COPERTINA + TESTO TXT
-       ========================================================== */
-
-    // 1) Imposta immagine copertina (con fallback messaggio)
-    (function initCover(){
-      const img = document.getElementById("coverImage");
-      img.src = CONFIG.coverImage;
-
-      img.onerror = function(){
-        showContentMessage(
-          "Copertina non trovata",
-          `Non riesco a caricare: ${CONFIG.coverImage}. Controlla che il file esista in assets/.`
-        );
-      };
-    })();
-
-    // 2) Carica il testo dal file TXT con fetch('txt/villaggio.txt')
-    (async function loadText(){
+    /* =========================
+       CARICAMENTO TESTO (fetch richiesto)
+       ========================= */
+    async function loadText(){
       try{
-        const res = await fetch(CONFIG.textFile, { cache: "no-store" });
-        if(!res.ok) throw new Error("HTTP " + res.status);
-        const raw = await res.text();
-
-        const text = document.getElementById("textContent");
-        text.classList.remove("text-loading");
-        text.textContent = raw; // testo puro
+        const res = await fetch(CONFIG.textFile);
+        if(!res.ok){
+          throw new Error("HTTP " + res.status);
+        }
+        const txt = await res.text();
+        textArea.textContent = txt;
       }catch(err){
-        showTextMessage(
-          "Testo non disponibile",
-          `Non riesco a caricare: ${CONFIG.textFile}. Verifica cartella/nome file. (${err.message})`
-        );
+        textArea.innerHTML = `
+          <div class="error-box">
+            <strong>Testo non disponibile.</strong><br/>
+            Non riesco a caricare <code>${CONFIG.textFile}</code>.<br/>
+            Verifica che esista in <code>txt/</code> e che GitHub Pages lo stia servendo correttamente.
+          </div>
+        `;
       }
-    })();
+    }
 
-    /* ==========================================================
-       RIQUADRO 5: GOOGLE MAPS (apre nel riquadro 3)
-       ========================================================== */
-    document.getElementById("btnMap").addEventListener("click", () => {
-      // Se lat/lon/zoom non sono compilati, messaggio chiaro
-      if (isPlaceholder(CONFIG.lat) || isPlaceholder(CONFIG.lon) || isPlaceholder(CONFIG.zoom)) {
-        showContentMessage(
-          "Coordinate mancanti",
-          "Compila LAT, LON e ZOOM nel file HTML (CONFIG) per mostrare Google Maps."
-        );
+    /* =========================
+       GOOGLE MAPS EMBED (coordinate richieste)
+       ========================= */
+    function openMap(){
+      const { lat, lon, zoom } = CONFIG;
+
+      // Validazione minima (se restano placeholder)
+      if([lat, lon, zoom].some(v => !v || String(v).includes("{") || v === "LAT" || v === "LON" || v === "ZOOM")){
+        showError(dynamicArea, "Coordinate non impostate. Inserisci lat/lon/zoom in CONFIG (es. lat:'41.462', lon:'15.545', zoom:'16').");
         return;
       }
 
-      // Costruzione embed con coordinate
-      // Nota: l'embed di Google Maps può variare; questa è una soluzione robusta via query su mappe.
-      const lat = encodeURIComponent(CONFIG.lat);
-      const lon = encodeURIComponent(CONFIG.lon);
-      const zoom = encodeURIComponent(CONFIG.zoom);
+      // Embed semplice Google Maps (no API key)
+      // q=lat,lon + z=zoom
+      const src = `https://www.google.com/maps?q=${encodeURIComponent(lat)},${encodeURIComponent(lon)}&z=${encodeURIComponent(zoom)}&output=embed`;
+      setIframeContent(src, "Google Maps");
+    }
 
-      const iframe = document.createElement("iframe");
-      iframe.className = "embed";
-      iframe.loading = "lazy";
-      iframe.referrerPolicy = "no-referrer-when-downgrade";
-      iframe.allowFullscreen = true;
+    /* =========================
+       VIDEO EMBED
+       ========================= */
+    function openVideo(){
+      const url = CONFIG.videoUrl;
 
-      // URL "query" con zoom: funziona come visualizzazione mappa
-      iframe.src = `https://www.google.com/maps?q=${lat},${lon}&z=${zoom}&output=embed`;
-
-      iframe.onerror = () => {
-        showContentMessage(
-          "Mappa non caricabile",
-          "Impossibile aprire l'embed di Google Maps. Controlla rete o parametri."
-        );
-      };
-
-      setContentArea(iframe);
-    });
-
-    /* ==========================================================
-       RIQUADRO 6: VIDEO EMBED (apre nel riquadro 3)
-       ========================================================== */
-    document.getElementById("btnVideo").addEventListener("click", () => {
-      if (isPlaceholder(CONFIG.videoEmbedUrl)) {
-        showContentMessage(
-          "Link video mancante",
-          "Inserisci LINK_VIDEO_EMBED (URL embed) nel file HTML (CONFIG)."
-        );
+      if(!url || url.includes("{")){
+        showError(dynamicArea, "Link video mancante o non valido (controlla CONFIG.videoUrl).");
         return;
       }
 
-      const iframe = document.createElement("iframe");
-      iframe.className = "embed";
-      iframe.loading = "lazy";
-      iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-      iframe.allowFullscreen = true;
-      iframe.src = CONFIG.videoEmbedUrl;
+      // Provo a trasformare in embed "robusto" se è un link shorts/watch.
+      const embed = toYouTubeEmbed(url);
 
-      iframe.onerror = () => {
-        showContentMessage(
-          "Video non caricabile",
-          "Impossibile aprire l'embed del video. Controlla che il link sia un vero URL embed."
-        );
-      };
+      // YouTube spesso richiede allow espliciti
+      dynamicArea.innerHTML = `
+        <iframe class="embed-frame"
+          src="${embed}"
+          title="Video"
+          loading="lazy"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen>
+        </iframe>
+      `;
+    }
 
-      setContentArea(iframe);
-    });
+    // Converte vari formati YouTube (shorts/watch/youtu.be) in /embed/ID
+    function toYouTubeEmbed(url){
+      try{
+        const u = new URL(url);
 
-    /* ==========================================================
-       RIQUADRO 7: GALLERIA (apre nel riquadro 3)
-       - Vista grande + miniature scorrevoli
-       ========================================================== */
-    document.getElementById("btnGallery").addEventListener("click", () => {
+        // shorts: /shorts/VIDEOID
+        if(u.pathname.startsWith("/shorts/")){
+          const id = u.pathname.split("/shorts/")[1].split(/[?&/]/)[0];
+          if(id) return `https://www.youtube.com/embed/${id}`;
+        }
+
+        // watch?v=VIDEOID
+        if(u.pathname === "/watch"){
+          const id = u.searchParams.get("v");
+          if(id) return `https://www.youtube.com/embed/${id}`;
+        }
+
+        // youtu.be/VIDEOID
+        if(u.hostname.includes("youtu.be")){
+          const id = u.pathname.replace("/", "").split(/[?&/]/)[0];
+          if(id) return `https://www.youtube.com/embed/${id}`;
+        }
+
+        // fallback: usa URL originale (potrebbe funzionare comunque)
+        return url;
+      }catch(e){
+        return url;
+      }
+    }
+
+    /* =========================
+       GALLERIA: miniatura scorrevole + vista grande
+       ========================= */
+    function openGallery(){
       const imgs = CONFIG.galleryImages || [];
-      if (!imgs.length || imgs.some(isPlaceholder)) {
-        showContentMessage(
-          "Galleria non configurata",
-          "Inserisci i nomi corretti delle immagini (1.jpeg, 2.jpeg, 3.jpeg) in assets/ (CONFIG.galleryImages)."
-        );
+      if(!imgs.length){
+        showError(dynamicArea, "Nessuna immagine configurata per la galleria (CONFIG.galleryImages).");
         return;
       }
 
-      const gallery = document.createElement("div");
-      gallery.className = "gallery";
+      // Costruzione HTML galleria
+      dynamicArea.innerHTML = `
+        <div class="gallery">
+          <div class="gallery-main" id="galleryMain">
+            <img id="galleryMainImg" alt="Immagine galleria" />
+          </div>
+          <div class="thumbs" id="thumbs"></div>
+        </div>
+      `;
 
-      const mainImg = document.createElement("img");
-      mainImg.className = "gallery-main";
-      mainImg.alt = "Immagine galleria (vista grande)";
+      const mainImg = document.getElementById("galleryMainImg");
+      const thumbs = document.getElementById("thumbs");
+
+      // Set prima immagine
       mainImg.src = imgs[0];
+      mainImg.onerror = () => showError(dynamicArea, "Non riesco a caricare le immagini della galleria. Controlla i nomi in assets/.");
 
-      // Se l'immagine grande non esiste -> messaggio chiaro
-      mainImg.onerror = () => {
-        showContentMessage(
-          "Immagini mancanti",
-          `Non riesco a caricare: ${mainImg.src}. Controlla assets/.`
-        );
-      };
-
-      const thumbs = document.createElement("div");
-      thumbs.className = "thumbs";
-
+      // Crea thumbnails
       imgs.forEach((src, idx) => {
-        const t = document.createElement("img");
-        t.className = "thumb" + (idx === 0 ? " active" : "");
-        t.src = src;
-        t.alt = "Miniatura " + (idx + 1);
-
-        // Se una miniatura manca, non rompiamo tutto: la rendiamo "disattivata"
-        t.onerror = () => {
-          t.classList.remove("active");
-          t.style.opacity = "0.35";
-          t.style.cursor = "not-allowed";
-          t.title = "File mancante: " + src;
-        };
-
+        const t = document.createElement("div");
+        t.className = "thumb";
+        t.innerHTML = `<img src="${src}" alt="Miniatura ${idx+1}">`;
         t.addEventListener("click", () => {
-          // Se questa miniatura è mancante, ignora
-          if (t.style.cursor === "not-allowed") return;
-
           mainImg.src = src;
-
-          // stato active
-          [...thumbs.querySelectorAll(".thumb")].forEach(x => x.classList.remove("active"));
-          t.classList.add("active");
         });
+
+        // se una miniatura manca, la nascondo senza far esplodere tutto
+        const ti = t.querySelector("img");
+        ti.onerror = () => { t.style.display = "none"; };
 
         thumbs.appendChild(t);
       });
+    }
 
-      gallery.appendChild(mainImg);
-      gallery.appendChild(thumbs);
+    /* =========================
+       3D: apre nel riquadro 3 un iframe a LINK_3D
+       (In più: se LINK_3D non è valorizzato, mostra lo snippet Sketchfab)
+       ========================= */
+    function open3D(){
+      const link = CONFIG.link3d;
 
-      setContentArea(gallery);
-    });
+      // Se l'utente non ha valorizzato LINK_3D, uso lo snippet sketchfab fornito
+      const isPlaceholder = !link || link.includes("{") || link === "LINK_3D";
 
-    /* ==========================================================
-       RIQUADRO 8: 3D (Sketchfab o pagina esterna) (apre nel riquadro 3)
-       ========================================================== */
-    document.getElementById("btn3D").addEventListener("click", () => {
-      if (isPlaceholder(CONFIG.link3D)) {
-        showContentMessage(
-          "Link 3D mancante",
-          "Inserisci LINK_3D nel file HTML (CONFIG). Può essere una pagina Sketchfab o altro URL embeddabile."
-        );
+      if(isPlaceholder){
+        dynamicArea.innerHTML = CONFIG.sketchfabEmbedHTML;
+
+        // Se per qualche motivo l'iframe sketchfab non carica, messaggio
+        const sf = dynamicArea.querySelector("iframe");
+        if(sf){
+          sf.onerror = () => showError(dynamicArea, "Embed Sketchfab non disponibile in questo momento.");
+        }
         return;
       }
 
-      const iframe = document.createElement("iframe");
-      iframe.className = "embed";
-      iframe.loading = "lazy";
-      iframe.allowFullscreen = true;
-      iframe.src = CONFIG.link3D;
+      // Altrimenti carico l'URL 3D come iframe richiesto
+      setIframeContent(link, "3D / Pagina");
+    }
 
-      iframe.onerror = () => {
-        showContentMessage(
-          "3D non caricabile",
-          "Impossibile aprire l'iframe. Verifica che l'URL permetta l'embedding (X-Frame-Options)."
-        );
-      };
+    /* =========================
+       EVENTI UI
+       ========================= */
+    document.getElementById("btnMap").addEventListener("click", openMap);
+    document.getElementById("btnVideo").addEventListener("click", openVideo);
+    document.getElementById("btnGallery").addEventListener("click", openGallery);
+    document.getElementById("btn3D").addEventListener("click", open3D);
 
-      setContentArea(iframe);
-    });
+    // Gestione errore copertina all'avvio (se manca)
+    coverImageEl.onerror = () => showError(dynamicArea, "Non trovo l'immagine di copertina in assets/villaggio.png.");
 
-    /* ==========================================================
-       EXTRA: se vuoi tornare alla copertina cliccando sul titolo
-       (Non richiesto, ma utile. Se non lo vuoi, elimina questo blocco.)
-       ========================================================== */
-    document.querySelector("h1").addEventListener("click", () => {
-      const img = document.createElement("img");
-      img.className = "hero-img";
-      img.alt = "Copertina: Il villaggio neolitico";
-      img.src = CONFIG.coverImage;
-      img.onerror = () => {
-        showContentMessage(
-          "Copertina non trovata",
-          `Non riesco a caricare: ${CONFIG.coverImage}. Controlla che il file esista in assets/.`
-        );
-      };
-      setContentArea(img);
-    });
+    // Avvio: carico testo e lascio copertina visibile
+    loadText();
   </script>
-
-  <!--
-    ==========================================================
-    Cartelle richieste
-    - assets/ (icone + immagini)
-    - txt/ (file testo)
-    ==========================================================
-  -->
 </body>
 </html>
