@@ -13,7 +13,7 @@
     touch-action:none;
     background:#000;
   }
-  /* Qui avviene la magia: background ripetuto orizzontalmente */
+  /* Il loop vero: immagine ripetuta in X */
   #pano{
     width:100%; height:100%;
     background-image:url("assets/panorama_360_loop.jpg");
@@ -22,87 +22,107 @@
     background-size:auto 100%; /* altezza piena, larghezza proporzionale */
     will-change:background-position;
   }
+  /* Immagine “di servizio” invisibile per leggere naturalWidth/naturalHeight */
+  #probe{
+    position:absolute;
+    width:1px; height:1px;
+    opacity:0; pointer-events:none;
+  }
 </style>
 </head>
 <body>
   <div id="viewer">
     <div id="pano"></div>
+    <img id="probe" src="assets/panorama_360_loop.jpg" alt="">
   </div>
 
 <script>
-  const viewer = document.getElementById('viewer');
-  const pano = document.getElementById('pano');
+(() => {
+  const viewer = document.getElementById("viewer");
+  const pano   = document.getElementById("pano");
+  const probe  = document.getElementById("probe");
 
-  let pos = 0;          // posizione orizzontale (px)
-  let vel = 0;          // velocità (px/frame)
-  let lastX = null;     // ultimo x
-  const friction = 0.93;
+  let pos = 0;        // posizione (px) nel “nastro” panoramico
+  let vel = 0;        // inerzia (px/frame)
+  let lastX = null;   // ultimo x del dito/mouse
+  const friction = 0.92;
 
-  // Calcolo della larghezza “reale” del panorama a schermo (in px)
-  // Serve per fare il modulo e loopare senza scatti.
-  let panoWidth = 3000; // fallback
+  let panoWidth = 1;  // larghezza reale (in px a schermo) dell'immagine ripetuta
 
-  function computePanoWidth(){
-    // carico l'immagine per conoscere rapporto e calcolare la larghezza visualizzata
-    const img = new Image();
-    img.onload = () => {
-      const ratio = img.naturalWidth / img.naturalHeight;
-      panoWidth = Math.round(window.innerHeight * ratio);
-    };
-    img.src = getComputedStyle(pano).backgroundImage.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
+  function mod(n, m){
+    // modulo sempre positivo
+    return ((n % m) + m) % m;
   }
 
-  function wrap(){
-    // mantiene pos sempre dentro [0, panoWidth)
-    if (panoWidth <= 0) return;
-    pos = ((pos % panoWidth) + panoWidth) % panoWidth;
+  function computePanoWidth(){
+    const H = window.innerHeight;
+    const nw = probe.naturalWidth;
+    const nh = probe.naturalHeight;
+
+    if (!nw || !nh) return; // se non ancora carica
+    const ratio = nw / nh;
+    panoWidth = Math.max(1, Math.round(H * ratio));
   }
 
   function render(){
-    wrap();
-    // Nota: sposto in negativo per “trascinare” a destra/sinistra
+    // loop infinito: pos sempre dentro [0, panoWidth)
+    pos = mod(pos, panoWidth);
+    // background-position in negativo per muovere il mondo “sotto il dito”
     pano.style.backgroundPosition = `${-pos}px 50%`;
   }
 
-  viewer.addEventListener('pointerdown', (e) => {
+  function kick(){
+    if (Math.abs(vel) > 0.05){
+      pos += vel;
+      vel *= friction;
+      render();
+    }
+    requestAnimationFrame(kick);
+  }
+
+  // Pointer events (iPad Safari ok)
+  viewer.addEventListener("pointerdown", (e) => {
     lastX = e.clientX;
     vel = 0;
     viewer.setPointerCapture(e.pointerId);
   });
 
-  viewer.addEventListener('pointermove', (e) => {
-    if (lastX !== null){
-      const dx = e.clientX - lastX;
-      // dx positivo = dito va a destra -> panorama si muove coerentemente
-      vel = -dx;     // invertiamo per mantenere sensazione naturale
-      pos += vel;
-      render();
-      lastX = e.clientX;
-    }
+  viewer.addEventListener("pointermove", (e) => {
+    if (lastX === null) return;
+    const dx = e.clientX - lastX;
+
+    // dx>0 (dito va a destra) -> panorama deve “scorrere” coerente
+    // qui scegliamo pos -= dx (sensazione naturale tipo “trascino lo spazio”)
+    pos -= dx;
+    vel = -dx;
+
+    lastX = e.clientX;
+    render();
   });
 
-  viewer.addEventListener('pointerup', (e) => {
+  function endPointer(e){
     lastX = null;
     try { viewer.releasePointerCapture(e.pointerId); } catch(_){}
-  });
-
-  function animate(){
-    if (Math.abs(vel) > 0.1){
-      pos += vel;
-      vel *= friction;
-      render();
-    }
-    requestAnimationFrame(animate);
   }
 
-  window.addEventListener('resize', () => {
+  viewer.addEventListener("pointerup", endPointer);
+  viewer.addEventListener("pointercancel", endPointer);
+  viewer.addEventListener("pointerleave", endPointer);
+
+  // Caricamento immagine + resize
+  probe.addEventListener("load", () => {
     computePanoWidth();
     render();
   });
 
-  computePanoWidth();
-  render();
-  animate();
+  window.addEventListener("resize", () => {
+    computePanoWidth();
+    render();
+  });
+
+  // avvio
+  kick();
+})();
 </script>
 </body>
 </html>
