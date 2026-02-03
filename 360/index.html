@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Atrio – Spazio Avvolgente 180°</title>
+<style>
+body{margin:0;overflow:hidden;background:#000;}
+#viewer{width:100vw;height:100vh;overflow:hidden;position:relative;touch-action:none;perspective:900px;}
+#panorama{
+  height:100%;
+  position:absolute;left:0;top:0;
+  will-change:transform;
+  transform-origin:center center;
+}
+#quote{
+  position:absolute;
+  bottom:18%;
+  left:50%;
+  transform:translateX(-50%) translateZ(50px);
+  color:#f0ddb0;
+  font-family:serif;
+  font-size:20px;
+  background:rgba(0,0,0,.4);
+  padding:10px 18px;
+  border-radius:24px;
+  pointer-events:none;
+}
+</style>
+</head>
+<body>
+<div id="viewer">
+  <img id="panorama" src="assets/panorama-180.jpg">
+  <div id="quote">fatti non foste per viver come bruti</div>
+</div>
+<script>
+const viewer = document.getElementById('viewer');
+const pan = document.getElementById('panorama');
+const quote = document.getElementById('quote');
+
+let pos = 0, vel = 0, lastX = null;
+const friction = 0.93;
+
+function resize(){
+  const ratio = pan.naturalWidth / pan.naturalHeight;
+  pan.style.width = (window.innerHeight * ratio) + 'px';
+}
+pan.onload = resize;
+window.onresize = resize;
+
+viewer.addEventListener('pointerdown', e => {
+  lastX = e.clientX;
+  vel = 0;
+  viewer.setPointerCapture(e.pointerId);
+});
+
+viewer.addEventListener('pointermove', e => {
+  if(lastX !== null){
+    const dx = e.clientX - lastX;
+    vel = dx;
+    pos += dx;
+    limit();
+    update();
+    lastX = e.clientX;
+  }
+});
+
+viewer.addEventListener('pointerup', e => {
+  lastX = null;
+  viewer.releasePointerCapture(e.pointerId);
+});
+
+function limit(){
+  const min = window.innerWidth - pan.offsetWidth;
+  if(pos > 0) pos = 0;
+  if(pos < min) pos = min;
+}
+
+function update(){
+  const depth = pos * 0.02;
+  pan.style.transform = `translateX(${pos}px) rotateY(${depth}deg)`;
+  quote.style.transform = `translateX(-50%) translateZ(50px) rotateY(${-depth*0.6}deg)`;
+}
+
+function animate(){
+  if(Math.abs(vel) > 0.1){
+    pos += vel;
+    vel *= friction;
+    limit();
+    update();
+  }
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>
