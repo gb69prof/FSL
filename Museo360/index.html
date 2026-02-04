@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Museo 360°</title>
+  <style>
+    :root{
+      --ui-bg: rgba(0,0,0,.45);
+      --ui-fg: rgba(255,255,255,.95);
+      --ui-muted: rgba(255,255,255,.75);
+      --accent: #f6c453;
+    }
+    html, body{
+      height:100%;
+      margin:0;
+      background:#0b0b0c;
+      color:var(--ui-fg);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      overscroll-behavior: none;
+      touch-action: none;
+    }
+    #app{
+      position:fixed;
+      inset:0;
+      overflow:hidden;
+      background:#000;
+    }
+
+    /* Panorama surface */
+    #pano{
+      position:absolute;
+      inset:0;
+      background-image: url("assets/pano.png");
+      background-repeat: repeat-x;
+      background-size: cover; /* will be overridden by JS for best feel */
+      background-position: 50% 50%;
+      will-change: background-position, background-size;
+      transform: translateZ(0);
+    }
+
+    /* subtle vignette for depth */
+    #vignette{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(ellipse at center, rgba(0,0,0,0) 35%, rgba(0,0,0,.35) 100%);
+      mix-blend-mode: multiply;
+    }
+
+    /* Top bar */
+    #hud{
+      position:absolute;
+      left:12px;
+      right:12px;
+      top:12px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      pointer-events:none;
+    }
+    .chip{
+      pointer-events:auto;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background: var(--ui-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 14px;
+      padding: 10px 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    .title{
+      font-weight: 650;
+      letter-spacing:.2px;
+      font-size: 14px;
+      line-height: 1.1;
+    }
+    .sub{
+      font-size: 12px;
+      color: var(--ui-muted);
+      line-height: 1.1;
+      margin-top:2px;
+    }
+    .btn{
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--ui-fg);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 14px;
+      font-weight: 600;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:active{ transform: scale(.98); }
+    .btnRow{ display:flex; gap:8px; align-items:center; }
+
+    /* Bottom hint */
+    #hint{
+      position:absolute;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:14px;
+      background: var(--ui-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--ui-muted);
+      pointer-events:none;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      max-width: calc(100% - 24px);
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    #dot{
+      width:8px;height:8px;border-radius:50%;
+      background: var(--accent);
+      box-shadow: 0 0 12px rgba(246,196,83,.7);
+      flex:0 0 auto;
+    }
+
+    /* Fullscreen prompt for iOS Safari */
+    #fsTip{
+      position:absolute;
+      right:12px;
+      bottom:60px;
+      background: rgba(0,0,0,.35);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--ui-muted);
+      pointer-events:none;
+      max-width: 220px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    #fsTip strong{ color: var(--ui-fg); }
+  </style>
+</head>
+<body>
+  <div id="app" aria-label="Panorama 360 gradi">
+    <div id="pano"></div>
+    <div id="vignette"></div>
+
+    <div id="hud">
+      <div class="chip">
+        <div>
+          <div class="title">Museo 360°</div>
+          <div class="sub">Trascina per guardarti intorno</div>
+        </div>
+      </div>
+
+      <div class="chip btnRow">
+        <button id="reset" class="btn" type="button">Centro</button>
+        <button id="zoom" class="btn" type="button">Zoom</button>
+      </div>
+    </div>
+
+    <div id="fsTip">Suggerimento: in Safari, usa <strong>Condividi → Aggiungi alla schermata Home</strong> per una vista più pulita.</div>
+
+    <div id="hint"><span id="dot"></span><span>Touch: trascina. Due dita: zoom. Doppio tap: centro.</span></div>
+  </div>
+
+<script>
+(() => {
+  const pano = document.getElementById('pano');
+  const btnReset = document.getElementById('reset');
+  const btnZoom = document.getElementById('zoom');
+
+  // "Virtual camera" state
+  let x = 50;   // background-position-x in %
+  let y = 50;   // background-position-y in %
+  let zoom = 1; // multiplier for background-size
+
+  // Interaction state
+  let isDown = false;
+  let lastX = 0, lastY = 0;
+  let vx = 0, vy = 0; // inertia velocity
+  let raf = null;
+
+  // Touch pinch state
+  let pinchStartDist = 0;
+  let pinchStartZoom = 1;
+
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+
+  function apply(){
+    // We simulate 360 by repeating horizontally; moving x loops 0..100
+    x = (x % 100 + 100) % 100;
+
+    // Vertical movement is limited (avoid seeing "poles" too much)
+    y = clamp(y, 20, 80);
+
+    // Background size: larger => zoom-in
+    // We use "auto" height to preserve feel; cover baseline handled by size calc below.
+    pano.style.backgroundPosition = `${x}% ${y}%`;
+    const size = 100 * zoom;
+    pano.style.backgroundSize = `${size}% auto`;
+  }
+
+  function tick(){
+    // friction
+    vx *= 0.92;
+    vy *= 0.92;
+
+    // stop threshold
+    if (Math.abs(vx) < 0.002 && Math.abs(vy) < 0.002){
+      raf = null;
+      return;
+    }
+    x += vx;
+    y += vy;
+    apply();
+    raf = requestAnimationFrame(tick);
+  }
+
+  function kickInertia(){
+    if (!raf) raf = requestAnimationFrame(tick);
+  }
+
+  function center(){
+    x = 50; y = 50;
+    vx = 0; vy = 0;
+    apply();
+  }
+
+  function toggleZoom(){
+    // cycle a few comfortable zoom levels for iPad
+    const levels = [1, 1.35, 1.8];
+    const idx = levels.findIndex(v => Math.abs(v - zoom) < 0.01);
+    zoom = levels[(idx + 1) % levels.length];
+    apply();
+  }
+
+  // Helpers: map pixel movement to % movement
+  function deltaToPercent(dx, dy){
+    // sensitivity tuned for iPad
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const sx = 120 / w;  // how much % per pixel
+    const sy = 80 / h;
+    return { px: dx * sx, py: dy * sy };
+  }
+
+  // Pointer events (work on iPad Safari)
+  pano.addEventListener('pointerdown', (e) => {
+    isDown = true;
+    pano.setPointerCapture(e.pointerId);
+    lastX = e.clientX; lastY = e.clientY;
+    vx = 0; vy = 0;
+  });
+
+  pano.addEventListener('pointermove', (e) => {
+    if (!isDown) return;
+    const dx = e.clientX - lastX;
+    const dy = e.clientY - lastY;
+    lastX = e.clientX; lastY = e.clientY;
+
+    const d = deltaToPercent(dx, dy);
+    x -= d.px;      // drag right -> look left
+    y -= d.py;      // drag down -> look up (subtle)
+    vx = -d.px * 0.35;
+    vy = -d.py * 0.35;
+    apply();
+  });
+
+  function pointerUp(){
+    if (!isDown) return;
+    isDown = false;
+    kickInertia();
+  }
+  pano.addEventListener('pointerup', pointerUp);
+  pano.addEventListener('pointercancel', pointerUp);
+  pano.addEventListener('pointerleave', pointerUp);
+
+  // Double tap to center
+  let lastTap = 0;
+  pano.addEventListener('touchend', (e) => {
+    const now = Date.now();
+    if (now - lastTap < 280){
+      center();
+    }
+    lastTap = now;
+  }, {passive:true});
+
+  // Pinch to zoom
+  pano.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length === 2){
+      pinchStartDist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      pinchStartZoom = zoom;
+    }
+  }, {passive:true});
+
+  pano.addEventListener('touchmove', (e) => {
+    if (e.touches && e.touches.length === 2){
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      const factor = dist / (pinchStartDist || dist);
+      zoom = clamp(pinchStartZoom * factor, 0.9, 2.6);
+      apply();
+    }
+  }, {passive:true});
+
+  btnReset.addEventListener('click', center);
+  btnZoom.addEventListener('click', toggleZoom);
+
+  // Optional: device orientation look-around (iPad requires permission on iOS 13+)
+  // We keep it off by default to avoid friction; user can enable by editing code.
+  // If you want it, uncomment below.
+  /*
+  window.addEventListener('deviceorientation', (ev) => {
+    if (ev.alpha == null) return;
+    x = (ev.alpha / 360) * 100;
+    y = 50 + (ev.beta / 180) * 30;
+    apply();
+  });
+  */
+
+  // Initial
+  apply();
+  // Keep nice feel on resize/rotation
+  window.addEventListener('resize', apply);
+})();
+</script>
+</body>
+</html>
