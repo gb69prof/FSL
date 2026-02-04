@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Museo 360° (iPad)</title>
+  <style>
+    :root{
+      --ui-bg: rgba(0,0,0,.45);
+      --ui-fg: rgba(255,255,255,.95);
+      --ui-muted: rgba(255,255,255,.75);
+      --accent: #f6c453;
+    }
+    html, body{
+      height:100%;
+      margin:0;
+      background:#000;
+      color:var(--ui-fg);
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      overscroll-behavior:none;
+    }
+    #app{
+      position:fixed;
+      inset:0;
+      overflow:hidden;
+      background:#000;
+      touch-action:none;
+    }
+    #view{
+      position:absolute;
+      inset:0;
+      overflow:hidden;
+      transform: translateZ(0);
+    }
+    #strip{
+      position:absolute;
+      top:0; left:0;
+      height:100%;
+      display:flex;
+      will-change: transform;
+      transform: translate3d(0,0,0);
+      transform-origin: 0 0;
+    }
+    #strip img{
+      height:100%;
+      width:auto;
+      display:block;
+      user-select:none;
+      -webkit-user-drag:none;
+      pointer-events:none;
+    }
+    #vignette{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background: radial-gradient(ellipse at center, rgba(0,0,0,0) 35%, rgba(0,0,0,.40) 100%);
+    }
+    #hud{
+      position:absolute;
+      left:12px; right:12px; top:12px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      pointer-events:none;
+    }
+    .chip{
+      pointer-events:auto;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background: var(--ui-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 14px;
+      padding: 10px 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    .title{ font-weight:650; font-size:14px; line-height:1.1; letter-spacing:.2px; }
+    .sub{ font-size:12px; color:var(--ui-muted); margin-top:2px; line-height:1.1; }
+    .btnRow{ display:flex; gap:8px; align-items:center; }
+    .btn{
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--ui-fg);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 14px;
+      font-weight: 600;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:active{ transform: scale(.98); }
+    #hint{
+      position:absolute;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:14px;
+      background: var(--ui-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--ui-muted);
+      pointer-events:none;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      max-width: calc(100% - 24px);
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    #dot{
+      width:8px;height:8px;border-radius:50%;
+      background: var(--accent);
+      box-shadow: 0 0 12px rgba(246,196,83,.7);
+      flex:0 0 auto;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <div id="view" aria-label="Panorama 360 gradi">
+    <div id="strip">
+      <img id="imgA" src="assets/pano.png" alt="Panorama Museo" />
+      <img id="imgB" src="assets/pano.png" alt="" />
+    </div>
+    <div id="vignette"></div>
+  </div>
+
+  <div id="hud">
+    <div class="chip">
+      <div>
+        <div class="title">Museo 360°</div>
+        <div class="sub">Trascina per ruotare — senza stacchi</div>
+      </div>
+    </div>
+    <div class="chip btnRow">
+      <button id="center" class="btn" type="button">Centro</button>
+      <button id="zoom" class="btn" type="button">Zoom</button>
+    </div>
+  </div>
+
+  <div id="hint"><span id="dot"></span><span>Touch: trascina. Due dita: zoom. Doppio tap: centro.</span></div>
+</div>
+
+<script>
+(() => {
+  const view = document.getElementById('view');
+  const strip = document.getElementById('strip');
+  const imgA = document.getElementById('imgA');
+  const btnCenter = document.getElementById('center');
+  const btnZoom = document.getElementById('zoom');
+
+  let imgW = 0;        // rendered width of ONE pano (px) at zoom=1
+  let offsetX = 0;     // translateX (px) at zoom=1
+  let offsetY = 0;     // translateY (px) at zoom=1
+  let zoom = 1;        // 0.9..2.6
+
+  let vx = 0, vy = 0;
+  let raf = null;
+
+  let down = false;
+  let lastX = 0, lastY = 0;
+
+  const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+
+  function apply(){
+    strip.style.transform = `translate3d(${offsetX}px, ${offsetY}px, 0) scale(${zoom})`;
+  }
+
+  function updateImgW(){
+    // width of imgA as currently rendered (includes scale due to zoom),
+    // so we divide by zoom to get the baseline width at zoom=1.
+    const r = imgA.getBoundingClientRect();
+    const w = r.width / zoom;
+    if (!w || w < 10){
+      requestAnimationFrame(updateImgW);
+      return;
+    }
+    imgW = w;
+
+    // keep offsets valid after resize/zoom
+    wrapX();
+    offsetY = clamp(offsetY, -120, 120);
+    apply();
+  }
+
+  function wrapX(){
+    if (!imgW) return;
+    // Keep offsetX within (-imgW, 0]
+    while (offsetX <= -imgW) offsetX += imgW;
+    while (offsetX > 0) offsetX -= imgW;
+  }
+
+  function tick(){
+    vx *= 0.92;
+    vy *= 0.90;
+
+    if (Math.abs(vx) < 0.05 && Math.abs(vy) < 0.05){
+      raf = null;
+      return;
+    }
+
+    offsetX += vx / zoom; // keep inertia consistent under zoom
+    offsetY += (vy / zoom) * 0.7;
+
+    offsetY = clamp(offsetY, -120, 120);
+
+    wrapX();
+    apply();
+    raf = requestAnimationFrame(tick);
+  }
+
+  function kick(){ if (!raf) raf = requestAnimationFrame(tick); }
+
+  function center(){
+    if (!imgW) return;
+    offsetX = -imgW / 2;
+    wrapX();
+    offsetY = 0;
+    vx = 0; vy = 0;
+    apply();
+  }
+
+  function cycleZoom(){
+    const levels = [1, 1.35, 1.8, 2.3];
+    const idx = levels.findIndex(v => Math.abs(v - zoom) < 0.02);
+    zoom = levels[(idx + 1) % levels.length];
+    requestAnimationFrame(updateImgW);
+    apply();
+  }
+
+  // Pointer drag
+  view.addEventListener('pointerdown', (e) => {
+    down = true;
+    view.setPointerCapture(e.pointerId);
+    lastX = e.clientX;
+    lastY = e.clientY;
+    vx = 0; vy = 0;
+  });
+
+  view.addEventListener('pointermove', (e) => {
+    if (!down) return;
+    const dx = e.clientX - lastX;
+    const dy = e.clientY - lastY;
+    lastX = e.clientX;
+    lastY = e.clientY;
+
+    // adjust by zoom so movement feels natural when zoomed in
+    offsetX += dx / zoom;
+    offsetY += (dy / zoom) * 0.6;
+
+    offsetY = clamp(offsetY, -120, 120);
+
+    // inertia (store in screen px, convert in tick)
+    vx = dx * 0.6;
+    vy = dy * 0.35;
+
+    wrapX();
+    apply();
+  });
+
+  function up(){
+    if (!down) return;
+    down = false;
+    kick();
+  }
+  view.addEventListener('pointerup', up);
+  view.addEventListener('pointercancel', up);
+  view.addEventListener('pointerleave', up);
+
+  // double tap = center
+  let lastTap = 0;
+  view.addEventListener('touchend', () => {
+    const now = Date.now();
+    if (now - lastTap < 280) center();
+    lastTap = now;
+  }, {passive:true});
+
+  // pinch zoom
+  let pinchStart = 0;
+  let pinchZoom = 1;
+
+  view.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length === 2){
+      pinchStart = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      pinchZoom = zoom;
+    }
+  }, {passive:true});
+
+  view.addEventListener('touchmove', (e) => {
+    if (e.touches && e.touches.length === 2){
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      const factor = dist / (pinchStart || dist);
+      zoom = clamp(pinchZoom * factor, 0.9, 2.6);
+      requestAnimationFrame(updateImgW);
+      apply();
+    }
+  }, {passive:true});
+
+  btnCenter.addEventListener('click', center);
+  btnZoom.addEventListener('click', cycleZoom);
+
+  if (imgA.complete) updateImgW();
+  else imgA.addEventListener('load', updateImgW);
+
+  window.addEventListener('resize', updateImgW);
+
+  // start centered once width is known
+  imgA.addEventListener('load', () => { updateImgW(); center(); });
+})();
+</script>
+</body>
+</html>
