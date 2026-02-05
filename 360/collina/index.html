@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Leopardi – La collina dell’Infinito (360°)</title>
+  <style>
+    :root {
+      --gold: #d6b25e;
+      --panel: rgba(10, 14, 22, 0.55);
+      --panel2: rgba(10, 14, 22, 0.35);
+      --text: #eef3ff;
+      --muted: rgba(238, 243, 255, 0.72);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; background: #070a12; color: var(--text); font-family: -apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif; }
+    header {
+      position: fixed; inset: 0 0 auto 0;
+      padding: 12px 12px max(12px, env(safe-area-inset-top));
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(to bottom, rgba(7,10,18,0.85), rgba(7,10,18,0.25));
+      backdrop-filter: blur(8px);
+      z-index: 10;
+    }
+    .pill {
+      justify-self: start;
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: var(--panel);
+      border: 1px solid rgba(214,178,94,0.22);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.22);
+      user-select: none;
+    }
+    .pill.right { justify-self: end; }
+    .dot {
+      width: 10px; height: 10px; border-radius: 999px;
+      background: var(--gold);
+      box-shadow: 0 0 0 4px rgba(214,178,94,0.12);
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(16px, 2.6vw, 22px);
+      font-weight: 800;
+      color: var(--gold);
+      letter-spacing: 0.4px;
+      text-align: center;
+      text-shadow: 0 2px 18px rgba(0,0,0,0.45);
+    }
+    .sub {
+      margin-top: 2px;
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+    }
+    main { height: 100%; display: grid; }
+    #stage {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none; /* we implement our own drag */
+      background: #070a12;
+    }
+    .hud {
+      position: fixed;
+      left: 12px; right: 12px; bottom: max(12px, env(safe-area-inset-bottom));
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .card {
+      pointer-events: auto;
+      border-radius: 18px;
+      background: var(--panel2);
+      border: 1px solid rgba(214,178,94,0.18);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.28);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+    .card .row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      padding: 12px 14px;
+      align-items: center;
+    }
+    .help {
+      font-size: 13px;
+      color: rgba(238,243,255,0.88);
+      line-height: 1.25;
+    }
+    .help b { color: var(--gold); }
+    .btns {
+      display: inline-flex;
+      gap: 8px;
+    }
+    button {
+      all: unset;
+      cursor: pointer;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(214,178,94,0.16);
+      border: 1px solid rgba(214,178,94,0.25);
+      color: var(--text);
+      font-weight: 700;
+      font-size: 12px;
+      user-select: none;
+    }
+    button:active {
+      transform: translateY(1px);
+    }
+    .quote {
+      padding: 0 14px 12px 14px;
+      color: rgba(238,243,255,0.86);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .quote em { color: rgba(238,243,255,0.92); }
+    a { color: var(--gold); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="pill" title="Progetto: percorso fisico su Leopardi">
+      <span class="dot"></span>
+      <span style="font-weight:700; font-size:13px;">Percorso fisico</span>
+    </div>
+    <div>
+      <h1>La collina dell’Infinito — 360°</h1>
+      <div class="sub">trascina • trascina con un dito • frecce/WASD • doppio click per centrare</div>
+    </div>
+    <div class="pill right">
+      <span style="font-size:12px; color: var(--muted);">Fase 1</span>
+      <span style="font-weight:800; color: var(--gold);">Recanati</span>
+    </div>
+  </header>
+
+  <main>
+    <section id="stage">
+      <canvas id="view" aria-label="Vista panoramica 360 gradi"></canvas>
+    </section>
+  </main>
+
+  <div class="hud">
+    <div class="card">
+      <div class="row">
+        <div class="help">
+          <div><b>Movimento</b>: trascina per guardare a sinistra/destra</div>
+          <div><b>Zoom</b>: trackpad / rotellina / pinch</div>
+        </div>
+        <div class="btns">
+          <button id="resetBtn" type="button" title="Centra e resetta zoom">Reset</button>
+          <button id="autoBtn" type="button" title="Avvia/ferma camminata lenta">Cammina</button>
+        </div>
+      </div>
+      <div class="quote">
+        <em>«…e il naufragar m’è dolce in questo mare.»</em><br/>
+        <span style="color: rgba(238,243,255,0.70);">— Giacomo Leopardi, <span style="font-style: italic;">L’infinito</span></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (() => {
+    "use strict";
+
+    const canvas = document.getElementById("view");
+    const ctx = canvas.getContext("2d", { alpha: false });
+
+    const img = new Image();
+    img.src = "assets/collina_infinito_360.jpg";
+
+    // Camera state (yaw in pixels of source image)
+    let yawPx = 0;                // horizontal offset in source pixels
+    let zoom = 1.0;               // 1 = default; higher = zoom in
+    const ZOOM_MIN = 0.75;
+    const ZOOM_MAX = 2.25;
+
+    // Interaction state
+    let dragging = false;
+    let lastX = 0;
+    let lastYaw = 0;
+
+    let keys = new Set();
+    let autoWalk = false;
+
+    function resize() {
+      const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      canvas.width = Math.floor(canvas.clientWidth * dpr);
+      canvas.height = Math.floor(canvas.clientHeight * dpr);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      draw();
+    }
+
+    function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+    function draw() {
+      if (!img.complete) {
+        // Loading screen
+        ctx.fillStyle = "#070a12";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle = "#d6b25e";
+        ctx.font = "700 18px -apple-system, system-ui, sans-serif";
+        ctx.fillText("Caricamento panorama…", 18, 32);
+        return;
+      }
+
+      const cw = canvas.width;
+      const ch = canvas.height;
+
+      // Field of view: we show a vertical slice of the equirectangular image.
+      // Viewport width in source pixels depends on zoom and aspect.
+      const aspect = cw / ch;
+      const viewH = img.height; // use full height
+      const viewW = Math.floor(viewH * aspect / zoom);
+
+      // Keep yaw in [0, img.width)
+      yawPx = ((yawPx % img.width) + img.width) % img.width;
+
+      // Source rect
+      let sx = Math.floor(yawPx - viewW / 2);
+      let sy = 0;
+
+      // Draw with wrap (two draws if crossing boundary)
+      ctx.fillStyle = "#070a12";
+      ctx.fillRect(0,0,cw,ch);
+
+      const drawSlice = (srcX, srcW, dstX, dstW) => {
+        ctx.drawImage(img, srcX, sy, srcW, viewH, dstX, 0, dstW, ch);
+      };
+
+      if (sx < 0) {
+        const leftW = -sx;
+        const rightW = viewW - leftW;
+        drawSlice(img.width - leftW, leftW, 0, Math.floor(cw * (leftW / viewW)));
+        drawSlice(0, rightW, Math.floor(cw * (leftW / viewW)), cw - Math.floor(cw * (leftW / viewW)));
+      } else if (sx + viewW > img.width) {
+        const rightW = img.width - sx;
+        const wrapW = viewW - rightW;
+        drawSlice(sx, rightW, 0, Math.floor(cw * (rightW / viewW)));
+        drawSlice(0, wrapW, Math.floor(cw * (rightW / viewW)), cw - Math.floor(cw * (rightW / viewW)));
+      } else {
+        drawSlice(sx, viewW, 0, cw);
+      }
+    }
+
+    function onPointerDown(e) {
+      dragging = true;
+      canvas.setPointerCapture(e.pointerId);
+      lastX = e.clientX;
+      lastYaw = yawPx;
+    }
+    function onPointerMove(e) {
+      if (!dragging) return;
+      const dx = e.clientX - lastX;
+      // Convert screen delta to source pixels delta (scaled by viewport)
+      const cw = canvas.width;
+      const viewW = Math.floor(img.height * (cw / canvas.height) / zoom);
+      const pxPerScreen = viewW / cw;
+      yawPx = lastYaw - dx * pxPerScreen;
+      draw();
+    }
+    function onPointerUp(e) {
+      dragging = false;
+      try { canvas.releasePointerCapture(e.pointerId); } catch (_) {}
+    }
+
+    function onWheel(e) {
+      e.preventDefault();
+      const delta = Math.sign(e.deltaY);
+      const factor = (delta > 0) ? 0.92 : 1.08;
+      zoom = clamp(zoom * factor, ZOOM_MIN, ZOOM_MAX);
+      draw();
+    }
+
+    // Basic pinch support (two pointers)
+    let pinch = null;
+    function pointerTracker(e) {
+      if (!pinch) pinch = new Map();
+      pinch.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (pinch.size === 2) {
+        const pts = Array.from(pinch.values());
+        const d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+        return d;
+      }
+      return null;
+    }
+    let lastPinchDist = null;
+
+    canvas.addEventListener("pointerdown", (e) => {
+      onPointerDown(e);
+      const d = pointerTracker(e);
+      if (d != null) { lastPinchDist = d; }
+    });
+
+    canvas.addEventListener("pointermove", (e) => {
+      if (pinch && pinch.has(e.pointerId)) {
+        pinch.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (pinch.size === 2) {
+          const pts = Array.from(pinch.values());
+          const d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+          if (lastPinchDist) {
+            const ratio = d / lastPinchDist;
+            zoom = clamp(zoom * ratio, ZOOM_MIN, ZOOM_MAX);
+          }
+          lastPinchDist = d;
+          draw();
+          return;
+        }
+      }
+      onPointerMove(e);
+    });
+
+    canvas.addEventListener("pointerup", (e) => {
+      onPointerUp(e);
+      if (pinch) pinch.delete(e.pointerId);
+      if (pinch && pinch.size < 2) lastPinchDist = null;
+    });
+    canvas.addEventListener("pointercancel", (e) => {
+      onPointerUp(e);
+      if (pinch) pinch.delete(e.pointerId);
+      if (pinch && pinch.size < 2) lastPinchDist = null;
+    });
+
+    canvas.addEventListener("wheel", onWheel, { passive: false });
+
+    // Keyboard (desktop)
+    window.addEventListener("keydown", (e) => {
+      const k = e.key.toLowerCase();
+      if (["arrowleft","arrowright","a","d","w","s","+","-","="].includes(k)) e.preventDefault();
+      keys.add(k);
+    }, { passive: false });
+    window.addEventListener("keyup", (e) => keys.delete(e.key.toLowerCase()));
+
+    function tick() {
+      if (img.complete) {
+        const speed = 1.8; // degrees-ish translated to pixels below
+        const pxSpeed = (img.width / 360) * speed; // px per frame-ish
+        if (keys.has("arrowleft") || keys.has("a")) yawPx -= pxSpeed;
+        if (keys.has("arrowright") || keys.has("d")) yawPx += pxSpeed;
+        if (keys.has("arrowup") || keys.has("w") || keys.has("=") || keys.has("+")) zoom = clamp(zoom * 1.01, ZOOM_MIN, ZOOM_MAX);
+        if (keys.has("arrowdown") || keys.has("s") || keys.has("-")) zoom = clamp(zoom * 0.99, ZOOM_MIN, ZOOM_MAX);
+        if (autoWalk) yawPx += pxSpeed * 0.45;
+        if (keys.size || autoWalk) draw();
+      }
+      requestAnimationFrame(tick);
+    }
+
+    // Buttons
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      yawPx = 0;
+      zoom = 1.0;
+      draw();
+    });
+    document.getElementById("autoBtn").addEventListener("click", (e) => {
+      autoWalk = !autoWalk;
+      e.target.textContent = autoWalk ? "Stop" : "Cammina";
+      draw();
+    });
+
+    canvas.addEventListener("dblclick", () => {
+      yawPx = 0;
+      draw();
+    });
+
+    // Init
+    window.addEventListener("resize", resize);
+    img.addEventListener("load", () => {
+      yawPx = img.width * 0.18; // start on a nice angle
+      resize();
+    });
+    resize();
+    tick();
+  })();
+  </script>
+</body>
+</html>
